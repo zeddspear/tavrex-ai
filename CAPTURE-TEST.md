@@ -1,5 +1,42 @@
 # Agent Capture Test
 
+## Latest verification — capture prerequisite passed
+
+A later IDE canary contains both the verbatim prompt and final response:
+`.agent-logs/2026-09-13_17-56-36_01a09be9-ebf3-79c2-9aa5-7d7a53375762.md`.
+The current build prompt is also automatically recorded in a separate session:
+`.agent-logs/2026-09-13_18-01-29_01a09bee-62af-7602-bb20-0320c75b9f77.md`.
+The current session records model `gpt-6-astra`; planning and implementation use
+this same agent. No hook code or historical log entries were changed.
+The hook's `tool: codex-cli` field is hardcoded and does not distinguish the IDE
+host; the latest canary prompt itself includes IDE context.
+
+The two original independent CLI canaries below and the newer IDE canary establish
+cross-session capture. The current final response is pending until this turn ends.
+This supersedes the earlier blocking audit preserved below.
+
+## Earlier audit — IDE capture not yet verified
+
+The two successful canaries below prove automatic capture in separate **Codex CLI**
+sessions. They do not prove capture in the VS Code conversation used to install the
+hooks. During the pre-build audit on 2026-09-13, that IDE conversation's latest build
+prompt and previous final response were absent from `.agent-logs/`.
+
+The active session metadata identifies `codex_vscode`, version
+`0.154.0-alpha.6.2`, session `01a09bd3-d924-7c43-8512-e30ec6746259`. Its model
+changed from `gpt-5.6-sol` to `gpt-6-astra`. The CLI canary results below remain
+unchanged; they are not evidence that this IDE session is being captured.
+
+**Product implementation is blocked until capture is verified in the actual build
+session.** Open a fresh Codex conversation for this repository, review/trust the
+project hooks if prompted, and submit `CAPTURE TEST — 8x assignment, Zeeshan Ahmed`.
+Confirm that both its prompt and final response reach `.agent-logs/` before building.
+If the IDE still does not execute the hooks, use the already-verified Codex CLI
+workflow for the build and verify a fresh canary there first.
+
+No Tavrex product code had been written at the time of this audit. Do not manually
+invent missing capture entries or change the historical canary records.
+
 ## Setup
 
 - Tool: Codex CLI `0.154.0`
