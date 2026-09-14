@@ -1,8 +1,21 @@
 import { z } from 'zod';
 import { meetingSchema } from '../../../../packages/shared/meeting';
 
-// Original synthetic examples. Never derived from private reference conversations.
+// One permissioned reference recording plus original synthetic examples.
 export const meetings = z.array(meetingSchema).parse([
+  {
+    id: 'recording-walkthrough',
+    title: 'From conversation to recording',
+    category: 'Product',
+    date: '2026-09-13T12:00:00Z',
+    duration: 104,
+    participants: ['Presenter', 'Participant'],
+    summary:
+      'A real reference demo of recording controls, marking important moments, and returning to the conversation after a call.',
+    takeaways: [],
+    actions: [],
+    provenance: 'reference-recording',
+  },
   {
     id: 'product-direction',
     title: 'A simpler first five minutes',

@@ -4,6 +4,7 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
     "jsx": "react-jsx",
     "strict": true,
     "noUnusedLocals": true,
@@ -14,5 +15,5 @@
     "skipLibCheck": true,
     "types": ["vite/client", "node"]
   },
-  "include": ["apps/web/src", "packages", "*.ts"]
+  "include": ["apps/web/src", "apps/worker/src", "packages", "*.ts"]
 }

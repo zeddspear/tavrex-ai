@@ -17,7 +17,10 @@ try {
     path: '/tmp/tavrex-qa/dashboard-desktop.png',
     fullPage: true,
   });
-  await page.getByRole('link', { name: 'Explore meeting' }).click();
+  await page
+    .locator('.meeting-row')
+    .filter({ hasText: 'A simpler first five minutes' })
+    .click();
   await page.getByRole('heading', { name: 'Meeting overview' }).waitFor();
   await page.reload();
   await page.getByRole('heading', { name: 'Meeting overview' }).waitFor();

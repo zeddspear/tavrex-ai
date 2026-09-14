@@ -1,20 +1,49 @@
-# Checkpoint A architecture
+# Showcase architecture through Checkpoint B
 
 ```text
-Clean browser → Cloudflare Pages (deployment pending)
-                    ↓
-              React / Vite SPA
-                    ↓
-       Zod-validated public synthetic fixtures
+Clean browser → Cloudflare Pages → React / Vite SPA
+                                      ↓
+                         Zod-validated meeting metadata
+                                      ↓ (on real meeting open)
+                         Recording JSON + public WebM
 ```
 
-No credentials, backend, authentication, private rows, or external media are
-required to run this checkpoint. The dashboard loads only compact meeting
-metadata and sample overviews; future transcript payloads should load on detail.
+No runtime secrets, login, private database rows, or external media hosts are
+needed for the reviewer path. Three original synthetic examples remain intact.
+The recorded meeting loads its transcript separately, so the dashboard does not
+fetch transcripts or video. Media uses `preload="metadata"` and native browser
+controls. Plain Pages assets returned HTTP 200 for Range requests in production,
+which broke seeking despite passing locally. A narrow Pages Function now returns
+correct 206 responses for the one public video. `_routes.json` invokes it only
+for that exact media path; all other app assets remain static.
 
-`packages/shared/meeting.ts` defines the initial contract. All fixtures explicitly
-declare synthetic provenance. Public deployment does not expose local references.
+`apps/worker/src/index.ts` reads the public asset through the built-in ASSETS
+binding and slices validated byte ranges. It supports GET, HEAD, open/suffix
+ranges, invalid-range 416 responses and If-Range fallback. It limits the asset
+to 12 MB, keeping this scoped to the ~3.4 MB reference fixture. This is not the
+architecture for large private recordings; those still require R2. Media requests
+use the Pages Functions free-tier quota. No new account, binding secrets, or
+paid resource is required.
 
-The later media/ingestion checkpoints use the specified Workers, Supabase and R2
-stack. Those services are deliberately not scaffolded before access is available
-and the public entry checkpoint passes. No database or AI capability is claimed.
+The worker is typechecked with the app and emitted as `_worker.js` by the build.
+Unit tests validate real response bytes and headers. Production verification
+explicitly checks 206 and Content-Length alongside actual browser seeking.
+
+References: [Pages serving behavior](https://developers.cloudflare.com/pages/configuration/serving-pages/)
+and [Pages advanced-mode ASSETS binding](https://developers.cloudflare.com/pages/functions/advanced-mode/).
+
+`packages/shared/meeting.ts` separates synthetic and reference provenance.
+`packages/shared/recording.ts` validates speaker references, ordered non-overlapping
+turns, and time bounds. Imported source timestamps are in seconds. Clicking one
+sets the real media element's `currentTime`; clicks before metadata are queued.
+Playback events drive time and active-turn state. Follow-scroll only moves the
+transcript container, and only during playback when enabled.
+
+Meeting-data failures have a 15-second timeout and retry. Media errors retain the
+transcript. Slow loading/buffering displays a connection notice and reload action.
+An empty imported transcript still permits playback. No fake processing timers.
+
+The sanitized video is a deliberately public static asset. Its source recording
+and unredacted references remain ignored. This is not a private-media architecture;
+future user uploads require the specified Workers, Supabase and R2 services with
+authorization. No live AI or ingestion capability is claimed at this checkpoint.

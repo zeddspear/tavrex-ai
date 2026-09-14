@@ -15,7 +15,7 @@ test('clean reviewer can explore, filter, sort, recover, and open a meeting', as
   await expect(
     page.getByRole('heading', { name: 'Your conversations. All connected.' }),
   ).toBeVisible();
-  await expect(page.locator('.meeting-row')).toHaveCount(3);
+  await expect(page.locator('.meeting-row')).toHaveCount(4);
   await page.getByRole('button', { name: 'Customer', exact: true }).click();
   await expect(page.locator('.meeting-row')).toHaveCount(1);
   await page.getByRole('button', { name: 'All meetings', exact: true }).click();
@@ -34,7 +34,10 @@ test('clean reviewer can explore, filter, sort, recover, and open a meeting', as
   await expect(page.locator('.meeting-row').first()).toContainText(
     'Less noise. More context.',
   );
-  await page.getByRole('link', { name: 'Explore meeting' }).click();
+  await page
+    .locator('.meeting-row')
+    .filter({ hasText: 'A simpler first five minutes' })
+    .click();
   await expect(
     page.getByRole('heading', { name: 'A simpler first five minutes' }),
   ).toBeVisible();
@@ -57,7 +60,7 @@ test('clean reviewer can explore, filter, sort, recover, and open a meeting', as
     );
   }
   await page.getByRole('link', { name: 'All meetings', exact: true }).click();
-  await expect(page.locator('.meeting-row')).toHaveCount(3);
+  await expect(page.locator('.meeting-row')).toHaveCount(4);
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= window.innerWidth,
@@ -72,7 +75,7 @@ test('invalid deep link has a working recovery route', async ({ page }) => {
     page.getByRole('heading', { name: 'Meeting not found' }),
   ).toBeVisible();
   await page.getByRole('link', { name: 'Back to meetings' }).click();
-  await expect(page.locator('.meeting-row')).toHaveCount(3);
+  await expect(page.locator('.meeting-row')).toHaveCount(4);
 });
 
 test('about dialog is keyboard accessible and returns focus', async ({

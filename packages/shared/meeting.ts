@@ -10,7 +10,7 @@ export const meetingSchema = z.object({
   summary: z.string().min(1),
   takeaways: z.array(z.string()),
   actions: z.array(z.object({ task: z.string(), owner: z.string() })),
-  provenance: z.literal('synthetic'),
+  provenance: z.enum(['synthetic', 'reference-recording']),
 });
 
 export type Meeting = z.infer<typeof meetingSchema>;

@@ -25,6 +25,7 @@ import {
   type Meeting,
 } from '../../../packages/shared/meeting';
 import { meetings } from './data/meetings';
+import { RecordingMeeting } from './components/RecordingMeeting';
 
 function Brand() {
   return (
@@ -50,18 +51,18 @@ function About() {
         <Dialog.Content className="dialog-content">
           <Dialog.Title>Meet your meeting workspace.</Dialog.Title>
           <Dialog.Description>
-            This is the first Tavrex AI assessment checkpoint: a public-ready
-            dashboard with original, synthetic meeting examples.
+            Explore a real reference recording alongside original synthetic
+            meeting examples.
           </Dialog.Description>
           <div className="about-body">
             <p>
               Search and filter the library, then open a meeting to explore its
-              sample overview. These examples are not real customer
-              conversations or live AI output.
+              overview. The recorded demo includes playback and its imported
+              transcript. Synthetic examples are labeled individually.
             </p>
             <p>
-              Recording playback, timestamped transcripts, summary templates,
-              moments, sharing, and upload processing are upcoming checkpoints.
+              Summary templates, moments, sharing, and upload processing are not
+              available yet.
             </p>
             <p>No account is required. No private meeting data is exposed.</p>
           </div>
@@ -96,7 +97,7 @@ function Shell({ children }: { children: React.ReactNode }) {
             <ShieldCheck size={19} />
             <strong>A space to explore</strong>
             <p>
-              Original sample meetings.
+              Real and sample meetings.
               <br />
               No account needed.
             </p>
@@ -196,7 +197,9 @@ function Dashboard() {
             Explore meeting <ArrowRight size={16} />
           </Link>
           <span className="feature-disclosure">
-            Synthetic demo · Sample analysis
+            {featured.provenance === 'reference-recording'
+              ? 'Real recording · Imported transcript'
+              : 'Synthetic demo · Sample analysis'}
           </span>
         </div>
         <div className="conversation-art" aria-hidden="true">
@@ -217,7 +220,7 @@ function Dashboard() {
                 ))}
               </span>
             </div>
-            <span className="art-time">24:32</span>
+            <span className="art-time">{formatTime(featured.duration)}</span>
           </div>
           <div className="art-connector" />
           <div className="art-card art-outcome">
@@ -321,8 +324,7 @@ function Dashboard() {
             Showing {filtered.length} of {meetings.length} meetings
           </span>
           <span>
-            <ShieldCheck size={14} /> All conversations are synthetic demo
-            examples
+            <ShieldCheck size={14} /> 1 real recording · 3 synthetic examples
           </span>
         </div>
       </section>
@@ -333,11 +335,11 @@ function Dashboard() {
         <div>
           <strong>Your meetings, with a little more meaning.</strong>
           <p>
-            Explore sample overviews now. Playback and sourced transcripts are
-            the next checkpoint.
+            Play the recorded demo and click a transcript timestamp to return to
+            the conversation.
           </p>
         </div>
-        <span className="small-label">BUILD IN PROGRESS</span>
+        <span className="small-label">EVIDENCE FIRST</span>
       </div>
     </>
   );
@@ -353,7 +355,11 @@ function MeetingRow({ meeting }: { meeting: Meeting }) {
         <div>
           <div className="meeting-title">
             {meeting.title}
-            <span className="category-tag">{meeting.category}</span>
+            <span className="category-tag">
+              {meeting.provenance === 'reference-recording'
+                ? 'Recorded demo'
+                : meeting.category}
+            </span>
           </div>
           <p>{meeting.summary}</p>
           <span className="mobile-meta">
@@ -388,6 +394,8 @@ function MeetingPreview() {
     document.title = `${meeting?.title ?? 'Meeting not found'} · Tavrex AI`;
   }, [meeting]);
   if (!meeting) return <NotFound />;
+  if (meeting.provenance === 'reference-recording')
+    return <RecordingMeeting key={meeting.id} meeting={meeting} />;
   async function copyOverview() {
     if (!meeting) return;
     try {

@@ -1,0 +1,43 @@
+{
+  "mediaUrl": "/media/recording-walkthrough-optimized.webm",
+  "posterUrl": "/media/recording-walkthrough.png",
+  "duration": 103.8,
+  "speakers": [
+    {
+      "id": "presenter",
+      "name": "Presenter"
+    },
+    {
+      "id": "participant",
+      "name": "Participant"
+    }
+  ],
+  "segments": [
+    {
+      "id": "presenter-turn",
+      "speakerId": "presenter",
+      "start": 2.7,
+      "end": 97.17,
+      "paragraphs": [
+        "If you don't, you'll see a Fathom panel also on your screen with a Start Recording button. Go ahead and click that button so that Fathom can join this meeting now.",
+        "Here is where the magic happens. Fathom has your back. You don't have to click a single button or take a single note.",
+        "Fathom will capture all of the important moments and action items and then will deliver them to your inbox within 30 seconds of the meeting ending.",
+        "You don't have to click a thing. But say that a really special moment on the call does happen that you know you want to go back and rewatch.",
+        "There's a highlight button on that Fathom panel. Go ahead and click that and you'll see it highlighted on the call recording page, which I'm also going to show you in a minute.",
+        "Anytime you want Fathom to stop recording, there is an end button on that Fathom panel. You can click that and Fathom will stop recording or when all participants.",
+        "Participants leave the meeting. Fathom will also stop recording. Once the call is done being recorded, that control panel will flip to a new screen and will have a big blue button that says view recording and summary.",
+        "When you click that button, it will take you to the call recording page. Alright, now go ahead, end this meeting, and then click that view recording and summary button, and I'll see you over on the call recording page.",
+        "See you there! Thanks, thanks."
+      ]
+    },
+    {
+      "id": "participant-turn",
+      "speakerId": "participant",
+      "start": 97.17,
+      "end": 103.8,
+      "paragraphs": [
+        "But my video is not getting recorded. Okay, let me end this meeting."
+      ]
+    }
+  ]
+}
