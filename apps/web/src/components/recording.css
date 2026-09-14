@@ -97,6 +97,21 @@
   color: #61516f;
   font-size: 12px;
 }
+.save-current-moment {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #64528c;
+  background: #f0ebf6;
+  border-radius: 6px;
+  padding: 7px 9px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.save-current-moment:hover {
+  background: #e4dbef;
+}
 .media-status {
   display: flex;
   align-items: center;
@@ -164,6 +179,229 @@
   line-height: 1.8;
   color: #7e7188;
   margin-top: 7px;
+}
+.moments-card {
+  border: 1px solid #e2dbe8;
+  border-radius: 12px;
+  background: #fffdfa;
+  padding: 20px;
+  scroll-margin-top: 24px;
+}
+.moments-heading {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+.moments-mark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  color: #6554b9;
+  background: #eee9f7;
+  border-radius: 9px;
+}
+.moments-heading h2 {
+  color: #403747;
+  font-size: 15px;
+}
+.moments-heading h2 span {
+  margin-left: 5px;
+  color: #806f8b;
+  font-size: 10px;
+  font-weight: 500;
+}
+.moments-heading p {
+  color: #897c90;
+  font-size: 10px;
+  margin-top: 4px;
+}
+.moment-composer {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+  padding: 17px;
+  border: 1px solid #ddd3e6;
+  border-radius: 9px;
+  background: #f8f5fa;
+}
+.moment-composer-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.moment-composer-heading h3 {
+  margin-top: 4px;
+  color: #44394b;
+  font-size: 14px;
+}
+.moment-close {
+  display: grid;
+  place-items: center;
+  padding: 4px;
+  color: #786c80;
+  background: transparent;
+  border-radius: 5px;
+}
+.moment-close:hover {
+  background: #eae4ef;
+}
+.moment-title-field,
+.moment-note-field,
+.moment-range-fields label {
+  display: grid;
+  gap: 6px;
+  color: #685b71;
+  font-size: 10px;
+  font-weight: 600;
+}
+.moment-note-field > span {
+  color: #9b8fa0;
+  font-weight: 400;
+}
+.moment-composer input,
+.moment-composer textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #ddd5e3;
+  border-radius: 6px;
+  color: #4d4353;
+  background: #fffdfa;
+  padding: 9px 10px;
+  font-size: 12px;
+  resize: vertical;
+}
+.moment-range-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 9px;
+}
+.moment-range-fields > span:not(.moment-range-preview) {
+  padding-bottom: 9px;
+  color: #9b8ca4;
+}
+.moment-range-preview {
+  padding: 9px 10px;
+  color: #675788;
+  background: #ebe5f3;
+  border-radius: 6px;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.moment-form-error {
+  color: #a34e55;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.moment-share-hint {
+  color: #85788b;
+  font-size: 9px;
+  line-height: 1.55;
+}
+.moment-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.moment-form-actions .primary-button,
+.moment-form-actions .secondary-button {
+  padding: 8px 11px;
+  font-size: 11px;
+}
+.moment-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 17px;
+}
+.moment-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 11px;
+  border: 1px solid #ebe5ee;
+  border-radius: 9px;
+  background: #fbf9fc;
+  padding: 12px;
+}
+.moment-play {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  color: #fff;
+  background: #6554b9;
+  border-radius: 7px;
+}
+.moment-play:hover {
+  background: #5543aa;
+}
+.moment-play:disabled {
+  opacity: 0.4;
+}
+.moment-copy {
+  min-width: 0;
+}
+.moment-copy h3 {
+  color: #4b4051;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.moment-copy p {
+  margin-top: 5px;
+  color: #756979;
+  font-size: 10px;
+  line-height: 1.55;
+}
+.moment-copy > span {
+  display: block;
+  margin-top: 6px;
+  color: #94869a;
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+}
+.moment-actions {
+  display: grid;
+  justify-items: end;
+  gap: 5px;
+}
+.moment-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-width: 104px;
+  padding: 6px 7px;
+  border-radius: 5px;
+  color: #68558e;
+  background: #eee8f5;
+  font-size: 9px;
+  white-space: nowrap;
+}
+.moment-action:hover {
+  background: #e2d9ed;
+}
+.moment-copy-status,
+.moment-save-notice {
+  color: #54745f;
+  font-size: 9px;
+}
+.moment-save-notice {
+  margin-top: 11px;
+}
+.moment-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 22px;
+  color: #887a90;
+  background: #faf8fb;
+  border-radius: 8px;
+  font-size: 11px;
 }
 .transcript-panel {
   grid-area: transcript;
@@ -532,6 +770,24 @@
   font-weight: 600;
   color: #5b4a69;
 }
+.moment-trigger {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #756186;
+  background: transparent;
+  padding: 5px 7px;
+  border-radius: 5px;
+  font-size: 10px;
+}
+.moment-trigger:hover {
+  color: #5e4790;
+  background: #eee7f6;
+}
+.moment-trigger + .timestamp-button {
+  margin-left: 0;
+}
 .timestamp-button {
   margin-left: auto;
   display: flex;
@@ -650,6 +906,12 @@
   .speed-control {
     font-size: 10px;
   }
+  .save-current-moment {
+    padding-inline: 7px;
+  }
+  .save-current-moment svg {
+    display: none;
+  }
   .media-error {
     gap: 8px;
   }
@@ -693,6 +955,32 @@
   }
   .transcript-turn {
     padding: 13px 9px;
+  }
+  .moment-trigger span {
+    display: none;
+  }
+  .moment-trigger {
+    padding-inline: 5px;
+  }
+  .moments-card {
+    padding: 16px 13px;
+  }
+  .moment-range-fields {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  }
+  .moment-range-preview {
+    grid-column: 1 / -1;
+    text-align: center;
+  }
+  .moment-item {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .moment-actions {
+    grid-column: 2;
+    justify-items: start;
+  }
+  .moment-action {
+    min-width: 0;
   }
   .recording-ready {
     font-size: 10px;

@@ -1,0 +1,302 @@
+.share-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: #322d37;
+  background:
+    radial-gradient(circle at 85% 8%, rgb(216 207 239 / 35%), transparent 29%),
+    #f8f7f3;
+}
+.share-topbar {
+  min-height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px clamp(20px, 4vw, 64px);
+  border-bottom: 1px solid #e7e3e9;
+  background: rgb(250 249 246 / 86%);
+}
+.share-brand {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.8px;
+}
+.share-brand > span {
+  display: grid;
+  place-items: center;
+  width: 31px;
+  height: 31px;
+  color: white;
+  background: #6554b9;
+  border-radius: 9px;
+}
+.share-brand small {
+  color: #6554b9;
+  font-size: 9px;
+  letter-spacing: 0.7px;
+  margin-left: -3px;
+  align-self: flex-start;
+  margin-top: 5px;
+}
+.share-provenance {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #71657b;
+  font-size: 11px;
+  background: #eee9f4;
+  padding: 7px 9px;
+  border-radius: 999px;
+}
+.share-main {
+  width: min(1160px, 100%);
+  flex: 1;
+  margin: 0 auto;
+  padding: clamp(40px, 6vw, 74px) clamp(18px, 4vw, 52px);
+}
+.share-card {
+  min-width: 0;
+}
+.share-intro {
+  max-width: 760px;
+  margin-bottom: 29px;
+}
+.share-intro h1 {
+  font-size: clamp(30px, 4vw, 45px);
+  line-height: 1.12;
+  font-weight: 550;
+  letter-spacing: -1.6px;
+}
+.share-note {
+  margin-top: 14px;
+  color: #6e6274;
+  font-size: 15px;
+  line-height: 1.7;
+}
+.share-range {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 17px;
+  color: #5f4e87;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.share-range span {
+  margin-left: 5px;
+  color: #8a7f90;
+}
+.share-content-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.8fr);
+  align-items: start;
+  gap: 22px;
+}
+.share-player-card,
+.share-context-card,
+.share-meeting-summary {
+  min-width: 0;
+  border: 1px solid #e1dbe6;
+  background: #fffdfa;
+  border-radius: 13px;
+  box-shadow: 0 17px 44px rgb(61 46 72 / 6%);
+}
+.share-player-frame {
+  position: relative;
+  aspect-ratio: 16/9;
+  overflow: hidden;
+  border-radius: 12px 12px 0 0;
+  background: #25212b;
+}
+.share-player-frame video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.share-media-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 20px;
+  color: #e8e1eb;
+  background: rgb(37 33 43 / 94%);
+  font-size: 11px;
+  text-align: center;
+}
+.share-media-overlay strong {
+  font-size: 15px;
+}
+.share-media-overlay span {
+  color: #c9bdcf;
+}
+.share-player-status {
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 15px;
+  color: #5d5264;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.share-player-status i {
+  color: #8b7e91;
+  font-style: normal;
+}
+.share-player-status button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 9px;
+  color: #fff;
+  background: #6554b9;
+  border-radius: 6px;
+  font-size: 10px;
+}
+.share-bounded-label {
+  color: #837789;
+}
+.share-context-card {
+  padding: 22px;
+}
+.share-context-card h2 {
+  margin-top: 7px;
+  color: #423849;
+  font-size: 18px;
+}
+.share-transcript {
+  display: grid;
+  gap: 17px;
+  max-height: 420px;
+  overflow-y: auto;
+  margin-top: 20px;
+  padding-right: 7px;
+  scrollbar-width: thin;
+  scrollbar-color: #d6cce1 transparent;
+}
+.share-transcript section > div {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 9px;
+}
+.share-transcript strong {
+  color: #594a62;
+  font-size: 11px;
+}
+.share-transcript section > div > span:last-child {
+  margin-left: auto;
+  color: #76618d;
+  background: #eee8f5;
+  padding: 4px 6px;
+  border-radius: 5px;
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+}
+.share-transcript p {
+  color: #6e6273;
+  font-size: 12px;
+  line-height: 1.72;
+}
+.share-transcript p + p {
+  margin-top: 9px;
+}
+.share-context-empty {
+  display: grid;
+  justify-items: center;
+  gap: 9px;
+  padding: 35px 15px;
+  color: #847789;
+  font-size: 11px;
+  line-height: 1.6;
+  text-align: center;
+}
+.share-meeting-summary {
+  margin-top: 22px;
+  padding: 19px 22px;
+}
+.share-meeting-summary p {
+  margin-top: 7px;
+  color: #706574;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.share-state {
+  min-height: 430px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 40px 20px;
+  color: #75667f;
+  border: 1px solid #e1dbe6;
+  border-radius: 13px;
+  background: #fffdfa;
+  text-align: center;
+}
+.share-state h1 {
+  color: #493c53;
+  font-size: 25px;
+}
+.share-state p {
+  max-width: 450px;
+  color: #7b7081;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.share-footer {
+  padding: 20px;
+  color: #908593;
+  border-top: 1px solid #e7e3e9;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-align: center;
+}
+@media (max-width: 840px) {
+  .share-content-grid {
+    grid-template-columns: 1fr;
+  }
+  .share-transcript {
+    max-height: none;
+  }
+}
+@media (max-width: 520px) {
+  .share-topbar {
+    align-items: flex-start;
+  }
+  .share-provenance {
+    font-size: 9px;
+  }
+  .share-main {
+    padding-top: 36px;
+  }
+  .share-intro h1 {
+    letter-spacing: -1px;
+  }
+  .share-range {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .share-range span {
+    width: 100%;
+    margin-left: 22px;
+  }
+  .share-context-card {
+    padding: 18px;
+  }
+  .share-player-status {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

@@ -166,3 +166,45 @@ Verification:
 - Video controls, transcript timestamps, all three summary templates, action
   timestamps, Follow Playback, loading/error recovery, and pre-metadata seeks
   remained operational.
+
+## D — Saved moments and public timestamped sharing
+
+Implementation:
+- The real meeting includes one seeded, transcript-supported moment. Reviewers can
+  create another from either the current player position or a transcript turn,
+  edit its title/note/start/end, and see it attached to the meeting immediately.
+- New moments are schema-validated, limited to a 60-second range within the media,
+  and persisted under a meeting-scoped browser-storage key. Invalid stored entries
+  are ignored; a storage failure retains the moment for the current visit and is
+  disclosed in the UI.
+- Copy link writes the actual public URL. Open public view launches a standalone
+  `/share/:token` page with no workspace navigation or login dependency. The URL
+  contains the bounded moment data, so a fresh browser does not depend on the
+  creator’s local storage.
+- The public page loads the original range-enabled recording, seeks to the moment
+  start, displays title, note, meeting context and overlapping transcript turns,
+  pauses at the exact end, and offers replay. Invalid links, recording-data failure,
+  media failure, retry, and missing transcript context have explicit recovery states.
+- Sharing remains zero-transcode and is limited to the deliberately public demo
+  recording. Production opaque tokens and authenticated database persistence remain
+  future infrastructure work.
+
+Validation:
+- Strict typecheck, ESLint, production build, and 21 Vitest checks passed.
+- Local Playwright suite: 33 passed, with 3 intentional project-specific skips.
+  Moment-specific scenarios passed in Chromium, Firefox, and mobile emulation:
+  create/edit/save, reload persistence, actual clipboard output, independent browser
+  context, 1:37 automatic seek, transcript context, bounded pause/replay, data/media
+  failure retry, invalid-link recovery, and no horizontal overflow.
+- Manual browser review confirmed the desktop meeting composer and standalone public
+  page composition; browser console error/warning logs were empty. The responsive
+  public route was also inspected at 390px through its accessibility surface, while
+  the full mobile interaction and overflow assertions ran in Playwright.
+- Final immutable deployment: https://e9b6be97.tavrex-ai.pages.dev (canonical:
+  https://tavrex-ai.pages.dev). All 9 moment-specific public checks passed across
+  Chromium, Firefox, and mobile emulation. A separate canonical-browser inspection
+  loaded the 1:37 seed moment and its participant context with an empty console.
+
+Next: Checkpoint E — search titles, summaries, and transcript text across meetings
+with contextual snippets and useful destination links. No E functionality was
+started in this checkpoint.

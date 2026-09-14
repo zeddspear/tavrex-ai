@@ -1,4 +1,5 @@
 {
+  "id": "recording-walkthrough",
   "mediaUrl": "/media/recording-walkthrough-optimized.webm",
   "posterUrl": "/media/recording-walkthrough.png",
   "duration": 103.8,
@@ -165,5 +166,16 @@
         "source": 74
       }
     ]
-  }
+  },
+  "moments": [
+    {
+      "id": "recording-wrap-up",
+      "meetingId": "recording-walkthrough",
+      "startMs": 97170,
+      "endMs": 103800,
+      "title": "Recording issue before wrap-up",
+      "note": "The participant flags a recording concern before ending the meeting.",
+      "createdAt": "2026-09-13T17:25:00.000Z"
+    }
+  ]
 }

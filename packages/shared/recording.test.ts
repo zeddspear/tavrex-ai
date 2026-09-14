@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import fixture from '../../apps/web/public/recordings/recording-walkthrough.json';
-import { activeSegment, boundedTime, recordingSchema } from './recording';
+import {
+  activeSegment,
+  boundedTime,
+  momentRange,
+  momentSharePath,
+  parseSharedMoment,
+  recordingSchema,
+} from './recording';
 
 describe('recording contract and timing', () => {
   it('validates the actual imported fixture', () => {
@@ -91,5 +98,73 @@ describe('recording contract and timing', () => {
     expect(boundedTime(-5, 103.8)).toBe(0);
     expect(boundedTime(500, 103.8)).toBe(103.8);
     expect(boundedTime(NaN, 103.8)).toBe(0);
+  });
+  it('defaults moments to a bounded 30-second range and caps the final moment', () => {
+    expect(momentRange(33, 103.8)).toEqual({
+      startMs: 33000,
+      endMs: 63000,
+    });
+    expect(momentRange(97.17, 103.8)).toEqual({
+      startMs: 97170,
+      endMs: 103800,
+    });
+  });
+  it('round-trips a public moment link without relying on browser storage', () => {
+    const moment = fixture.moments[0];
+    const path = momentSharePath(moment);
+    const url = new URL(path, 'https://tavrex.example');
+
+    const parsed = parseSharedMoment(
+      url.pathname.split('/').at(-1),
+      url.searchParams,
+      fixture.id,
+      fixture.duration,
+    );
+    expect(parsed).toMatchObject({
+      id: moment.id,
+      meetingId: moment.meetingId,
+      startMs: moment.startMs,
+      endMs: moment.endMs,
+      title: moment.title,
+      note: moment.note,
+    });
+  });
+  it('rejects malformed, overlong, and out-of-bounds public moments', () => {
+    const valid = new URLSearchParams({
+      start: '10',
+      end: '20',
+      title: 'Useful moment',
+    });
+    expect(
+      parseSharedMoment('another-meeting-id', valid, fixture.id, fixture.duration),
+    ).toBeNull();
+    valid.delete('start');
+    expect(
+      parseSharedMoment(
+        `${fixture.id}-id`,
+        valid,
+        fixture.id,
+        fixture.duration,
+      ),
+    ).toBeNull();
+    valid.set('start', '10');
+    valid.set('end', '80');
+    expect(
+      parseSharedMoment(
+        `${fixture.id}-id`,
+        valid,
+        fixture.id,
+        fixture.duration,
+      ),
+    ).toBeNull();
+    valid.set('end', '120');
+    expect(
+      parseSharedMoment(
+        `${fixture.id}-id`,
+        valid,
+        fixture.id,
+        fixture.duration,
+      ),
+    ).toBeNull();
   });
 });

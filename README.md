@@ -5,8 +5,8 @@ meetings → playback and transcript → summaries → sourced actions → momen
 
 ## Current status
 
-**Checkpoints 0 through C completed and verified. Live: https://tavrex-ai.pages.dev**
-The playback, transcript, summary-template, and sourced-action showcase is implemented.
+**Checkpoints 0 through D completed and verified. Live: https://tavrex-ai.pages.dev**
+The playback, transcript, intelligence, and public-moment showcase is implemented.
 
 Working features:
 - Responsive, no-login library with one real reference recording and three original synthetic examples.
@@ -15,12 +15,16 @@ Working features:
 - Three cached summary templates with materially different General, Sales / Customer,
   and Recruiting / Interview structures.
 - Two transcript-supported action items with owner, timing, and media source links.
+- Saved moments from the current player position or a transcript turn, with editable
+  title, note, and a bounded range that persists in the reviewer’s browser.
+- Public, no-login moment links that seek the real recording, show transcript context,
+  and pause at the shared range end without transcoding.
 - Loading, buffering, failure/retry, and empty-transcript states.
 - Search titles, sample summaries, and participants; category filters and date sorting.
 - Meeting overview routes, copy overview, missing-meeting recovery, keyboard-accessible help.
 - Explicit synthetic data labels and no reference account information in fixtures.
 
-Not implemented yet: live AI generation, moments/sharing, transcript search,
+Not implemented yet: live AI generation, transcript-context search,
 upload/transcription, and private storage.
 No live bot, calendar connection, or authentication is represented as functional.
 
@@ -55,6 +59,7 @@ Zod. Vitest and Playwright verify the critical reviewer entry path.
 Browser → Cloudflare Pages → React app → Public metadata
                                      → Recording JSON + cached intelligence
                                      → Sanitized WebM on meeting open
+                                     → Self-contained public moment route
 ```
 
 A narrow Pages Function serves byte ranges for the one public demo video.
@@ -122,5 +127,5 @@ they do not constitute testing on a physical iPhone or in Safari.
 
 ## Next checkpoints
 
-Public moments → transcript-context search → real ingestion → submission checks.
+Transcript-context search → real ingestion → submission checks.
 No bonus work before these are safe.

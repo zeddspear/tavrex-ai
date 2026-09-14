@@ -26,6 +26,7 @@ import {
 } from '../../../packages/shared/meeting';
 import { meetings } from './data/meetings';
 import { RecordingMeeting } from './components/RecordingMeeting';
+import { SharedMoment } from './components/SharedMoment';
 
 function Brand() {
   return (
@@ -61,9 +62,9 @@ function About() {
               transcript. Synthetic examples are labeled individually.
             </p>
             <p>
-              Three prepared summary views and sourced action items are
-              available for the recorded demo. Moments, sharing, and upload
-              processing are upcoming checkpoints.
+              Three prepared summary views, sourced action items, and public
+              timestamped moments are available for the recorded demo. Upload
+              processing is an upcoming checkpoint.
             </p>
             <p>No account is required. No private meeting data is exposed.</p>
           </div>
@@ -512,13 +513,21 @@ function NotFound() {
 
 export function App() {
   return (
-    <Shell>
-      <Routes>
-        <Route path="/" element={<Navigate to="/app" replace />} />
-        <Route path="/app" element={<Dashboard />} />
-        <Route path="/app/meetings/:id" element={<MeetingPreview />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Shell>
+    <Routes>
+      <Route path="/share/:token" element={<SharedMoment />} />
+      <Route
+        path="*"
+        element={
+          <Shell>
+            <Routes>
+              <Route path="/" element={<Navigate to="/app" replace />} />
+              <Route path="/app" element={<Dashboard />} />
+              <Route path="/app/meetings/:id" element={<MeetingPreview />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Shell>
+        }
+      />
+    </Routes>
   );
 }

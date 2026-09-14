@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import {
   ArrowLeft,
   AudioLines,
+  BookmarkPlus,
   Clock3,
   FileText,
   LoaderCircle,
@@ -15,10 +16,12 @@ import { formatTime, type Meeting } from '../../../../packages/shared/meeting';
 import {
   activeSegment,
   boundedTime,
+  momentRange,
   recordingSchema,
   type Recording,
 } from '../../../../packages/shared/recording';
 import { MeetingIntelligence } from './MeetingIntelligence';
+import { MeetingMoments, type MomentDraft } from './MeetingMoments';
 import './recording.css';
 
 export function RecordingMeeting({ meeting }: { meeting: Meeting }) {
@@ -125,6 +128,8 @@ function RecordingExperience({ recording }: { recording: Recording }) {
   const [follow, setFollow] = useState(true);
   const [notice, setNotice] = useState('');
   const [mediaAttempt, setMediaAttempt] = useState(0);
+  const [momentDraft, setMomentDraft] = useState<MomentDraft | null>(null);
+  const momentRequest = useRef(0);
   const activeId = activeSegment(recording.segments, time);
 
   useEffect(() => {
@@ -196,6 +201,16 @@ function RecordingExperience({ recording }: { recording: Recording }) {
     }
   }
 
+  function prepareMoment(start: number, selectedEnd?: number) {
+    momentRequest.current += 1;
+    const range = momentRange(start, duration, selectedEnd);
+    setMomentDraft({
+      requestId: momentRequest.current,
+      start: range.startMs / 1000,
+      end: range.endMs / 1000,
+    });
+  }
+
   return (
     <div className="recording-layout">
       <section className="recording-column" aria-label="Meeting recording">
@@ -257,6 +272,13 @@ function RecordingExperience({ recording }: { recording: Recording }) {
           <span className="playback-time" aria-label="Playback position">
             {formatTime(time)} <span>/ {formatTime(Math.ceil(duration))}</span>
           </span>
+          <button
+            className="save-current-moment"
+            onClick={() => prepareMoment(time)}
+            aria-label={`Save current moment at ${formatTime(time)}`}
+          >
+            <BookmarkPlus size={15} /> Save moment
+          </button>
           <label className="speed-control">
             Speed
             <select
@@ -311,6 +333,15 @@ function RecordingExperience({ recording }: { recording: Recording }) {
             </p>
           </details>
         </div>
+        <MeetingMoments
+          meetingId={recording.id}
+          duration={duration}
+          seededMoments={recording.moments}
+          draft={momentDraft}
+          onCloseDraft={() => setMomentDraft(null)}
+          onSeek={seek}
+          seekDisabled={state === 'error'}
+        />
       </section>
       <MeetingIntelligence
         intelligence={recording.intelligence}
@@ -369,6 +400,19 @@ function RecordingExperience({ recording }: { recording: Recording }) {
                       )?.name
                     }
                   </strong>
+                  <button
+                    className="moment-trigger"
+                    aria-label={`Save moment from transcript at ${formatTime(segment.start)}`}
+                    onClick={() =>
+                      prepareMoment(
+                        segment.start,
+                        Math.min(segment.start + 30, segment.end),
+                      )
+                    }
+                  >
+                    <BookmarkPlus size={13} />
+                    <span>Save moment</span>
+                  </button>
                   <button
                     className="timestamp-button"
                     aria-label={`Seek to ${formatTime(segment.start)}`}

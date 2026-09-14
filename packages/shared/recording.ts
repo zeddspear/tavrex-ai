@@ -49,14 +49,45 @@ const intelligenceSchema = z.object({
   actions: z.array(actionItemSchema).min(1),
 });
 
+export const meetingMomentSchema = z
+  .object({
+    id: z.string().regex(/^[a-z0-9-]+$/),
+    meetingId: z.string().min(1),
+    startMs: z.number().int().nonnegative(),
+    endMs: z.number().int().positive(),
+    title: z.string().trim().min(1).max(100),
+    note: z.string().trim().max(280),
+    createdAt: z.string().datetime(),
+  })
+  .refine((moment) => moment.startMs < moment.endMs, {
+    message: 'Moment end must follow its start',
+    path: ['endMs'],
+  });
+
+const sharedMomentSchema = z
+  .object({
+    start: z.coerce.number().nonnegative(),
+    end: z.coerce.number().positive(),
+    title: z.string().trim().min(1).max(100),
+    note: z.string().trim().max(280).default(''),
+  })
+  .refine((moment) => moment.start < moment.end, {
+    message: 'Shared moment end must follow its start',
+  })
+  .refine((moment) => moment.end - moment.start <= 60, {
+    message: 'Shared moments are limited to 60 seconds',
+  });
+
 export const recordingSchema = z
   .object({
+    id: z.string().min(1),
     mediaUrl: z.string().startsWith('/media/'),
     posterUrl: z.string().startsWith('/media/'),
     duration: z.number().positive(),
     speakers: z.array(z.object({ id: z.string(), name: z.string() })).min(1),
     segments: z.array(segmentSchema),
     intelligence: intelligenceSchema,
+    moments: z.array(meetingMomentSchema),
   })
   .superRefine((recording, context) => {
     const ids = new Set<string>();
@@ -120,12 +151,94 @@ export const recordingSchema = z
         });
       }
     });
+    const momentIds = new Set<string>();
+    recording.moments.forEach((moment, index) => {
+      if (
+        momentIds.has(moment.id) ||
+        moment.meetingId !== recording.id ||
+        moment.endMs > recording.duration * 1000
+      ) {
+        context.addIssue({
+          code: 'custom',
+          path: ['moments', index],
+          message: 'Invalid moment identity, meeting reference, or time range',
+        });
+      }
+      momentIds.add(moment.id);
+    });
   });
 
 export type Recording = z.infer<typeof recordingSchema>;
 export type Segment = z.infer<typeof segmentSchema>;
 export type MeetingIntelligence = Recording['intelligence'];
 export type SummaryTemplateKey = z.infer<typeof summaryTemplateKeySchema>;
+export type MeetingMoment = z.infer<typeof meetingMomentSchema>;
+
+export function momentRange(
+  start: number,
+  duration: number,
+  selectedEnd?: number,
+): { startMs: number; endMs: number } {
+  const safeDuration = Math.max(0.001, duration);
+  const safeStart = Math.min(
+    boundedTime(start, safeDuration),
+    Math.max(0, safeDuration - 0.001),
+  );
+  const defaultEnd = Math.min(safeStart + 30, safeDuration);
+  const safeEnd = Math.min(
+    Math.max(selectedEnd ?? defaultEnd, safeStart + 0.001),
+    safeDuration,
+  );
+  return {
+    startMs: Math.round(safeStart * 1000),
+    endMs: Math.round(safeEnd * 1000),
+  };
+}
+
+export function momentSharePath(moment: MeetingMoment): string {
+  const query = new URLSearchParams({
+    start: String(moment.startMs / 1000),
+    end: String(moment.endMs / 1000),
+    title: moment.title,
+  });
+  if (moment.note) query.set('note', moment.note);
+  return `/share/${encodeURIComponent(`${moment.meetingId}-${moment.id}`)}?${query}`;
+}
+
+export function parseSharedMoment(
+  token: string | undefined,
+  query: URLSearchParams,
+  meetingId: string,
+  duration: number,
+): MeetingMoment | null {
+  const prefix = `${meetingId}-`;
+  if (
+    !token?.startsWith(prefix) ||
+    !query.has('start') ||
+    !query.has('end') ||
+    !query.has('title')
+  ) {
+    return null;
+  }
+  const id = token.slice(prefix.length);
+  const parsed = sharedMomentSchema.safeParse({
+    start: query.get('start'),
+    end: query.get('end'),
+    title: query.get('title'),
+    note: query.get('note') ?? '',
+  });
+  if (!parsed.success || parsed.data.end > duration) return null;
+  const moment = meetingMomentSchema.safeParse({
+    id,
+    meetingId,
+    startMs: Math.round(parsed.data.start * 1000),
+    endMs: Math.round(parsed.data.end * 1000),
+    title: parsed.data.title,
+    note: parsed.data.note,
+    createdAt: '2026-09-13T00:00:00.000Z',
+  });
+  return moment.success ? moment.data : null;
+}
 
 export function activeSegment(
   segments: Segment[],

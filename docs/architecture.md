@@ -1,4 +1,4 @@
-# Showcase architecture through Checkpoint C
+# Showcase architecture through Checkpoint D
 
 ```text
 Clean browser → Cloudflare Pages → React / Vite SPA
@@ -8,6 +8,8 @@ Clean browser → Cloudflare Pages → React / Vite SPA
                          Recording JSON + public WebM
                               ↓
                  Cached summaries + sourced actions
+                              ↓
+             Browser-persisted moments + public deep links
 ```
 
 No runtime secrets, login, private database rows, or external media hosts are
@@ -63,3 +65,16 @@ The sanitized video is a deliberately public static asset. Its source recording
 and unredacted references remain ignored. This is not a private-media architecture;
 future user uploads require the specified Workers, Supabase and R2 services with
 authorization. No live AI or ingestion capability is claimed at this checkpoint.
+
+Moments use the specification’s timestamp-reference approach rather than video
+transcoding. The seeded public recording includes one validated shareable moment.
+New moments are Zod-validated and saved under a meeting-scoped browser-storage key;
+the share URL carries its validated start, end, title, and optional note. That URL
+therefore works in a clean browser without relying on the creator’s local storage.
+The public route accepts only the deliberately public recording, clamps ranges to
+its media duration and 60 seconds, displays overlapping transcript turns, and pauses
+at the range end. It renders no private workspace navigation or identifiers.
+
+This is suitable for the public assessment fixture. Production user moments still
+need authenticated persistence and opaque server-resolved share tokens as defined
+in the specification.
