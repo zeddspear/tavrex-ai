@@ -61,8 +61,9 @@ function About() {
               transcript. Synthetic examples are labeled individually.
             </p>
             <p>
-              Summary templates, moments, sharing, and upload processing are not
-              available yet.
+              Three prepared summary views and sourced action items are
+              available for the recorded demo. Moments, sharing, and upload
+              processing are upcoming checkpoints.
             </p>
             <p>No account is required. No private meeting data is exposed.</p>
           </div>
@@ -335,8 +336,8 @@ function Dashboard() {
         <div>
           <strong>Your meetings, with a little more meaning.</strong>
           <p>
-            Play the recorded demo and click a transcript timestamp to return to
-            the conversation.
+            Play the recorded demo, compare three summary views, and trace every
+            action back to the conversation.
           </p>
         </div>
         <span className="small-label">EVIDENCE FIRST</span>

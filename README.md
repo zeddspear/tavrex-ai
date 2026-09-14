@@ -5,20 +5,23 @@ meetings → playback and transcript → summaries → sourced actions → momen
 
 ## Current status
 
-**Checkpoints 0, A and B completed and verified. Live: https://tavrex-ai.pages.dev**
-The playback/transcript showcase is implemented; later intelligence and sharing checkpoints remain.
+**Checkpoints 0 through C completed and verified. Live: https://tavrex-ai.pages.dev**
+The playback, transcript, summary-template, and sourced-action showcase is implemented.
 
 Working features:
 - Responsive, no-login library with one real reference recording and three original synthetic examples.
 - Real video/audio playback, native seek/volume controls, five playback speeds.
 - Timestamped speaker turns that seek the player, active-turn highlighting, optional follow-scroll.
+- Three cached summary templates with materially different General, Sales / Customer,
+  and Recruiting / Interview structures.
+- Two transcript-supported action items with owner, timing, and media source links.
 - Loading, buffering, failure/retry, and empty-transcript states.
 - Search titles, sample summaries, and participants; category filters and date sorting.
 - Meeting overview routes, copy overview, missing-meeting recovery, keyboard-accessible help.
 - Explicit synthetic data labels and no reference account information in fixtures.
 
-Not implemented yet: AI generation/templates,
-sourced actions, moments/sharing, transcript search, upload/transcription, and private storage.
+Not implemented yet: live AI generation, moments/sharing, transcript search,
+upload/transcription, and private storage.
 No live bot, calendar connection, or authentication is represented as functional.
 
 ## Run locally
@@ -50,7 +53,8 @@ Zod. Vitest and Playwright verify the critical reviewer entry path.
 
 ```text
 Browser → Cloudflare Pages → React app → Public metadata
-                                     → Recording JSON + sanitized WebM on meeting open
+                                     → Recording JSON + cached intelligence
+                                     → Sanitized WebM on meeting open
 ```
 
 A narrow Pages Function serves byte ranges for the one public demo video.
@@ -88,6 +92,8 @@ local login; never paste tokens into chat or put secrets in browser variables.
 - The recorded demo uses a supplied real recording and imported reference transcript.
   It is not synthetic, but it is also not Tavrex-generated transcription. End-to-end
   ingestion remains an unmet later requirement. The other three examples are synthetic.
+- Its three summaries and action items are prepared, transcript-grounded demo output.
+  Template switching does not call a model or imply live generation.
 - Raw Fathom materials remain excluded from Git. A sanitized, permissioned video
   derivative and neutral-speaker transcript are included for the real playback demo.
   See [media provenance](docs/reference-research/recording-provenance.md).
@@ -116,5 +122,5 @@ they do not constitute testing on a physical iPhone or in Safari.
 
 ## Next checkpoints
 
-Three summary templates and sourced actions → public moments → transcript-context
-search → real ingestion → submission checks. No bonus work before these are safe.
+Public moments → transcript-context search → real ingestion → submission checks.
+No bonus work before these are safe.

@@ -3,8 +3,9 @@
 All six supplied PNG screenshots and both Markdown exports in the local
 `fathom-ui-and-meeting-summary/` directory were inspected before implementation.
 Raw assets are excluded from Git: they contain account identity, a participant
-image, and recording links without explicit public redistribution permission.
-No reference recording media file was supplied. No screenshots are republished.
+image, and recording links. A recording was supplied later in direct response to
+the request for public-demo media; only its sanitized derivative is published.
+No screenshots are republished.
 
 | Local screenshot (timestamp suffix) | OBSERVED | Interaction / edge case | TAVREX DECISION | Do not copy |
 | --- | --- | --- | --- | --- |
@@ -25,14 +26,16 @@ The content is a product onboarding demonstration rather than a customer meeting
 INFERRED: Source links likely seek playback. Screenshots and exported links alone
 do not establish playback synchronization, persistence, or share authorization.
 
-TAVREX DECISION: Keep summary claims tied to transcript evidence. Do not invent
-sales commitments or recruiting conclusions when a template does not apply.
-Use neutral original demo fixtures until permissioned real media is available.
+TAVREX DECISION: Keep summary claims tied to transcript evidence. The supplied
+summary export provides the best available 0:02, 0:14, 0:33, 0:50, 1:04, and
+1:14 source anchors; the transcript provides the final 1:37 speaker anchor. Do not
+invent sales commitments or recruiting conclusions when a template does not apply.
+Use three cached structures and disclose that no live model generated them.
 
 ## Evidence gaps (not represented as completed research)
 
 Calendar connection, live capture, external clip playback, saved highlights,
-cross-meeting search results, actual template output changes, and a one-hour /
+cross-meeting search results and a one-hour /
 eight-speaker recording were not directly exercised in supplied evidence.
 Only the capture workflow described in the transcript is observed as a statement;
 it is not independent verification. No Fathom login or interaction was performed.

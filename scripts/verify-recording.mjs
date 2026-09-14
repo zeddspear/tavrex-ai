@@ -30,6 +30,18 @@ try {
     path: '/tmp/tavrex-qa/recording-desktop.png',
     fullPage: true,
   });
+  await page
+    .getByRole('button', { name: /Sales \/ Customer Needs and value/ })
+    .click();
+  await page
+    .getByRole('heading', {
+      name: 'A product walkthrough centered on less note-taking',
+    })
+    .waitFor();
+  await page.screenshot({
+    path: '/tmp/tavrex-qa/intelligence-sales.png',
+    fullPage: true,
+  });
   await page.getByRole('button', { name: 'Seek to 1:37' }).click();
   await page.waitForFunction(() => !document.querySelector('video').seeking);
   await page
@@ -41,6 +53,16 @@ try {
   await mobile.goto(`${baseURL}/app/meetings/recording-walkthrough`);
   await mobile
     .getByRole('heading', { name: 'Transcript', exact: false })
+    .waitFor();
+  await mobile
+    .getByRole('button', {
+      name: /Recruiting \/ Interview Conversation signals/,
+    })
+    .click();
+  await mobile
+    .getByRole('heading', {
+      name: 'Clear facilitation, with limited interview evidence',
+    })
     .waitFor();
   await mobile.screenshot({
     path: '/tmp/tavrex-qa/recording-mobile.png',

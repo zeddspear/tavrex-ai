@@ -1,4 +1,4 @@
-# Showcase architecture through Checkpoint B
+# Showcase architecture through Checkpoint C
 
 ```text
 Clean browser → Cloudflare Pages → React / Vite SPA
@@ -6,6 +6,8 @@ Clean browser → Cloudflare Pages → React / Vite SPA
                          Zod-validated meeting metadata
                                       ↓ (on real meeting open)
                          Recording JSON + public WebM
+                              ↓
+                 Cached summaries + sourced actions
 ```
 
 No runtime secrets, login, private database rows, or external media hosts are
@@ -34,7 +36,8 @@ and [Pages advanced-mode ASSETS binding](https://developers.cloudflare.com/pages
 
 `packages/shared/meeting.ts` separates synthetic and reference provenance.
 `packages/shared/recording.ts` validates speaker references, ordered non-overlapping
-turns, and time bounds. Imported source timestamps are in seconds. Clicking one
+turns, intelligence-template keys, and every summary/action source bound. Imported
+source timestamps are in seconds. Clicking one
 sets the real media element's `currentTime`; clicks before metadata are queued.
 Playback events drive time and active-turn state. Follow-scroll only moves the
 transcript container, and only during playback when enabled.
@@ -42,6 +45,19 @@ transcript container, and only during playback when enabled.
 Meeting-data failures have a 15-second timeout and retry. Media errors retain the
 transcript. Slow loading/buffering displays a connection notice and reload action.
 An empty imported transcript still permits playback. No fake processing timers.
+
+The recording JSON contains exactly three cached templates: General, Sales /
+Customer, and Recruiting / Interview. Each uses a different title, framing, and
+section structure. The recruiting view explicitly identifies the conversation as
+a product walkthrough and withholds unsupported candidate judgments. Summary and
+action citations call the same bounded seek function as transcript timestamps.
+Switching templates is synchronous because all three outputs are already cached;
+meeting JSON loading, validation failure, and retry states cover this data.
+
+The analysis is a prepared demo fixture grounded in the supplied transcript and
+summary evidence. The UI discloses that Tavrex did not run a live model for this
+recording. This keeps reviewer behavior reliable without representing seeded output
+as a live AI service. Real generation remains part of the ingestion checkpoint.
 
 The sanitized video is a deliberately public static asset. Its source recording
 and unredacted references remain ignored. This is not a private-media architecture;

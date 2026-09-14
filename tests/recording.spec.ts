@@ -192,3 +192,59 @@ test('timestamp selected before metadata loads is applied when media is ready', 
     )
     .toBeCloseTo(97.17, 1);
 });
+
+test('three summary templates differ and action sources seek the recording', async ({
+  page,
+}) => {
+  await page.goto(path);
+  const general = page.getByRole('button', { name: /General Balanced recap/ });
+  const sales = page.getByRole('button', {
+    name: /Sales \/ Customer Needs and value/,
+  });
+  const recruiting = page.getByRole('button', {
+    name: /Recruiting \/ Interview Conversation signals/,
+  });
+  await expect(general).toHaveAttribute('aria-pressed', 'true');
+  await expect(
+    page.getByRole('heading', {
+      name: 'How the recording workflow fits together',
+    }),
+  ).toBeVisible();
+
+  await sales.click();
+  await expect(sales).toHaveAttribute('aria-pressed', 'true');
+  await expect(
+    page.getByRole('heading', {
+      name: 'A product walkthrough centered on less note-taking',
+    }),
+  ).toBeVisible();
+  await expect(page.getByText('Friction observed')).toBeVisible();
+
+  await recruiting.click();
+  await expect(recruiting).toHaveAttribute('aria-pressed', 'true');
+  await expect(
+    page.getByRole('heading', {
+      name: 'Clear facilitation, with limited interview evidence',
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByText('No role history, motivation, or hiring criteria'),
+  ).toBeVisible();
+
+  await expect(
+    page.getByRole('heading', { name: 'Action items' }),
+  ).toBeVisible();
+  await expect(page.getByText('End the current meeting')).toBeVisible();
+  await expect(
+    page.getByText('Open “View recording and summary”'),
+  ).toBeVisible();
+  await page
+    .getByRole('button', { name: 'Seek to source at 1:14' })
+    .first()
+    .click();
+  await expect
+    .poll(() =>
+      page.locator('video').evaluate((element) => element.currentTime),
+    )
+    .toBeCloseTo(74, 1);
+});

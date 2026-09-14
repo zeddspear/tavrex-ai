@@ -18,6 +18,7 @@ import {
   recordingSchema,
   type Recording,
 } from '../../../../packages/shared/recording';
+import { MeetingIntelligence } from './MeetingIntelligence';
 import './recording.css';
 
 export function RecordingMeeting({ meeting }: { meeting: Meeting }) {
@@ -315,6 +316,11 @@ function RecordingExperience({ recording }: { recording: Recording }) {
           </details>
         </div>
       </section>
+      <MeetingIntelligence
+        intelligence={recording.intelligence}
+        onSeek={seek}
+        seekDisabled={state === 'error'}
+      />
       <section className="transcript-panel" aria-labelledby="transcript-title">
         <div className="transcript-header">
           <div>

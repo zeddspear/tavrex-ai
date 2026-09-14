@@ -39,5 +39,131 @@
         "But my video is not getting recorded. Okay, let me end this meeting."
       ]
     }
-  ]
+  ],
+  "intelligence": {
+    "provenance": "prepared-demo",
+    "templates": [
+      {
+        "key": "general",
+        "label": "General",
+        "descriptor": "Balanced recap",
+        "title": "How the recording workflow fits together",
+        "overview": "The presenter walks through the recording lifecycle: start capture, mark useful moments during the call, and return to the recording and summary when the conversation ends.",
+        "sections": [
+          {
+            "title": "Key points",
+            "items": [
+              {
+                "text": "The host starts capture from the in-meeting recording panel.",
+                "source": 2
+              },
+              {
+                "text": "Important moments can be marked during the call for faster review later.",
+                "source": 33
+              },
+              {
+                "text": "The completed call leads into a recording and summary view.",
+                "source": 64
+              }
+            ]
+          },
+          {
+            "title": "Outcome",
+            "items": [
+              {
+                "text": "The participant is asked to end the meeting and continue on the recording page.",
+                "source": 74
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "sales-customer",
+        "label": "Sales / Customer",
+        "descriptor": "Needs and value",
+        "title": "A product walkthrough centered on less note-taking",
+        "overview": "The conversation frames the product around a simple customer outcome: preserve the important parts of a meeting without interrupting the discussion to take notes.",
+        "sections": [
+          {
+            "title": "Customer value",
+            "items": [
+              {
+                "text": "Automated capture is positioned as a way to stay present instead of taking notes.",
+                "source": 14
+              },
+              {
+                "text": "Manual highlights give the user control over moments they already know they will revisit.",
+                "source": 33
+              },
+              {
+                "text": "The post-call handoff puts the recording and summary behind one clear next step.",
+                "source": 64
+              }
+            ]
+          },
+          {
+            "title": "Friction observed",
+            "items": [
+              {
+                "text": "The participant reports that their video is not being recorded before ending the meeting.",
+                "source": 97.17
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "recruiting-interview",
+        "label": "Recruiting / Interview",
+        "descriptor": "Conversation signals",
+        "title": "Clear facilitation, with limited interview evidence",
+        "overview": "This was a product walkthrough rather than an interview. The template surfaces observable communication signals while avoiding unsupported judgments about experience, motivation, or role fit.",
+        "sections": [
+          {
+            "title": "Communication evidence",
+            "items": [
+              {
+                "text": "The presenter gives a direct first step and explains what the participant should expect next.",
+                "source": 2
+              },
+              {
+                "text": "The workflow is explained in sequence from capture to post-call review.",
+                "source": 50
+              }
+            ]
+          },
+          {
+            "title": "Participant signal",
+            "items": [
+              {
+                "text": "The participant briefly raises a recording issue and then confirms they will end the meeting.",
+                "source": 97.17
+              },
+              {
+                "text": "No role history, motivation, or hiring criteria are discussed in this conversation.",
+                "source": 97.17
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "id": "end-meeting",
+        "task": "End the current meeting",
+        "owner": "Participant",
+        "timing": "At the close of the call",
+        "source": 74
+      },
+      {
+        "id": "open-recording-summary",
+        "task": "Open “View recording and summary” after the call",
+        "owner": "Participant",
+        "timing": "Immediately after ending",
+        "source": 74
+      }
+    ]
+  }
 }

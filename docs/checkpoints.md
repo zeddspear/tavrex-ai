@@ -94,3 +94,47 @@ Cold public media can buffer depending on network speed, with visible feedback.
 
 Next: Checkpoint C — summary, three meaningful templates, and action items with
 source timestamps. No C or bonus functionality was started in this iteration.
+
+## C — AI output
+
+Implementation:
+- The real recording now includes an intelligence panel beside the player and a
+  full-width transcript below, preserving the readable playback/transcript flow.
+- General, Sales / Customer, and Recruiting / Interview are three cached,
+  materially distinct analysis views. Each changes the title, executive framing,
+  and sections instead of merely changing a tab label.
+- The recruiting view marks the meeting as a product walkthrough and deliberately
+  withholds unsupported candidate claims. The sales view identifies customer value
+  and the observed recording issue without inventing a commercial commitment.
+- Two action items preserve the transcript-supported owner, timing and source at
+  1:14. Every rendered key point and action contains a bounded source timestamp;
+  clicking any source calls the same playback seek used by the transcript.
+- Intelligence is Zod-validated inside the public recording fixture. It checks
+  all three template keys, distinct output, and citations within media duration.
+  The UI explains that this is prepared, transcript-grounded demo output rather
+  than live Tavrex generation.
+
+Validation:
+- Strict typecheck, ESLint, and production build passed.
+- Vitest: 18 passed, including missing/duplicate template and out-of-range source
+  rejection.
+- Local Playwright: 23 passed, 1 intentional desktop-dialog skip on mobile.
+  The new test switches all three templates, confirms their different content,
+  and verifies an action-source button seeks the real video to 1:14.
+- Deployed to https://9434a18e.tavrex-ai.pages.dev (canonical:
+  https://tavrex-ai.pages.dev). Chromium and Firefox completed their full public
+  suites before a transient network change affected the combined mobile run.
+  A fresh, isolated mobile run against the immutable deployment then passed all 5
+  recording cases, including playback, error/retry, pre-metadata seek, templates,
+  and action source seeking. The endpoint returned HTTP 200 for the page and the
+  existing range function remained verified in clean-browser checks.
+- Final local visual review: desktop player/intelligence pairing and mobile stacked
+  layout were inspected; mobile had no horizontal overflow.
+
+Limits: analysis is cached demo output, not model-generated or persisted per user.
+Loading and retry states apply to the combined recording/intelligence fixture, and
+the output state is immediately ready once that fixture validates. Live generation
+and customization remain intentionally deferred.
+
+Next: Checkpoint D — create a saved moment and make its public timestamped share
+route work in a clean browser. No D or bonus functionality was started here.
