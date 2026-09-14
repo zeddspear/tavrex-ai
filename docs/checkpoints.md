@@ -254,3 +254,31 @@ and private indexed storage remain outside this checkpoint.
 
 Next: Checkpoint F — real upload, processing, and transcription. No ingestion or
 Tier C bonus functionality was started in this checkpoint.
+
+### Checkpoint F prerequisite audit — incomplete
+
+The current capture includes this iteration's prompt. Checkpoint E is committed
+as `306a072`. The available authoritative file is `TAVREX_AI_AGENT_BUILD_SPEC.md`;
+no separate revised file is present. The ingestion acceptance path requires real
+media upload, transcription, persisted transcript, and the existing meeting view.
+
+Cloudflare OAuth access is valid, but the account has no R2 buckets, the Pages
+project has no production secrets, and no local Supabase/R2 credentials exist.
+The missing server configuration was requested through the input panel. No
+credentials were read into the prompt or assessment capture.
+
+Preparation only:
+- `packages/shared/ingestion.ts` validates upload metadata, normalizes provider
+  timestamps, and defines processing transitions and retry stages.
+- Five ingestion unit tests cover file limits/types/paths, timestamp preservation,
+  empty/invalid provider output, transcript order, and retry stages.
+- `supabase/migrations/202609150001_private_ingestion.sql` defines a private table
+  with RLS, server-only access, processing leases, and stored transcript/analysis.
+  The migration has not been applied or tested against a live database.
+- `.env.example` lists the missing server variable names; `docs/ingestion-setup.md`
+  records setup and the remaining acceptance path.
+
+Typecheck, ESLint, build, and 31 unit tests passed. The production frontend asset
+hashes are unchanged from Checkpoint E. No upload UI, API, or live transcription is
+claimed complete or deployed. Checkpoint F remains the next incomplete checkpoint;
+real ingestion and browser acceptance await service access.
