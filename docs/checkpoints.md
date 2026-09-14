@@ -208,3 +208,11 @@ Validation:
 Next: Checkpoint E — search titles, summaries, and transcript text across meetings
 with contextual snippets and useful destination links. No E functionality was
 started in this checkpoint.
+
+### Checkpoint D audit
+
+A follow-up specification audit found that the public moment page exposed the
+meeting title only through the media accessibility label. The title is now visibly
+rendered with the required meeting summary. The corrected immutable deployment is
+https://8dbe49e0.tavrex-ai.pages.dev; all 9 local and all 9 public moment checks
+passed across Chromium, Firefox, and mobile emulation after this correction.

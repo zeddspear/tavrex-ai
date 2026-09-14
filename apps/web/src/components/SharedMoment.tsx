@@ -304,6 +304,7 @@ function SharedMomentExperience({
 
       <div className="share-meeting-summary">
         <span className="small-label">MEETING CONTEXT</span>
+        <h2>{meetingTitle}</h2>
         <p>{meetingSummary}</p>
       </div>
     </article>

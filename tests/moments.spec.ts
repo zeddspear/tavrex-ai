@@ -76,6 +76,14 @@ test('transcript moment persists and opens with the correct context in a clean b
   ).toBeVisible();
   await expect(visitor.getByText('Shared via Tavrex AI')).toBeVisible();
   await expect(
+    visitor.getByRole('heading', { name: 'From conversation to recording' }),
+  ).toBeVisible();
+  await expect(
+    visitor.getByText('A real reference demo of recording controls', {
+      exact: false,
+    }),
+  ).toBeVisible();
+  await expect(
     visitor.getByText('But my video is not getting recorded.', { exact: false }),
   ).toBeVisible();
   await expect(visitor.locator('.sidebar')).toHaveCount(0);

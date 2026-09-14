@@ -226,10 +226,16 @@
   padding: 19px 22px;
 }
 .share-meeting-summary p {
-  margin-top: 7px;
+  margin-top: 8px;
   color: #706574;
   font-size: 12px;
   line-height: 1.7;
+}
+.share-meeting-summary h2 {
+  margin-top: 7px;
+  color: #463b4c;
+  font-size: 16px;
+  font-weight: 600;
 }
 .share-state {
   min-height: 430px;
