@@ -33,6 +33,48 @@
   grid-area: player;
   min-width: 0;
 }
+.recording-search-arrival {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  scroll-margin-top: 24px;
+  margin-bottom: 12px;
+  padding: 11px 12px;
+  color: #70607b;
+  border: 1px solid #ded6e6;
+  border-radius: 8px;
+  background: #f4f0f7;
+  font-size: 10px;
+}
+.recording-search-arrival > span,
+.recording-search-arrival button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.recording-search-arrival > span {
+  color: #59458d;
+  font-weight: 650;
+  white-space: nowrap;
+}
+.recording-search-arrival p {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.recording-search-arrival button {
+  color: #fff;
+  background: #6554b9;
+  border-radius: 5px;
+  padding: 6px 8px;
+  font-size: 9px;
+  white-space: nowrap;
+}
+.recording-search-arrival button:hover {
+  background: #5543aa;
+}
 .player-frame {
   position: relative;
   aspect-ratio: 16/9;
@@ -898,6 +940,13 @@
   }
   .recording-layout {
     gap: 18px;
+  }
+  .recording-search-arrival {
+    grid-template-columns: 1fr auto;
+  }
+  .recording-search-arrival p {
+    grid-column: 1 / -1;
+    grid-row: 2;
   }
   .player-toolbar {
     padding: 10px;

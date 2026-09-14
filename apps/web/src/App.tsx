@@ -1,5 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Link, Navigate, Route, Routes, useParams } from 'react-router-dom';
+import {
+  Link,
+  Navigate,
+  Route,
+  Routes,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom';
 import * as Dialog from '@radix-ui/react-dialog';
 import {
   ArrowDown,
@@ -24,7 +31,16 @@ import {
   formatTime,
   type Meeting,
 } from '../../../packages/shared/meeting';
+import {
+  searchMeeting,
+  searchMeetingLibrary,
+} from '../../../packages/shared/search';
 import { meetings } from './data/meetings';
+import { searchDocuments } from './data/searchDocuments';
+import {
+  HighlightText,
+  MeetingSearchResults,
+} from './components/MeetingSearch';
 import { RecordingMeeting } from './components/RecordingMeeting';
 import { SharedMoment } from './components/SharedMoment';
 
@@ -164,11 +180,23 @@ function Dashboard() {
   useEffect(() => {
     document.title = 'Meetings · Tavrex AI';
   }, []);
-  const filtered = filterMeetings(meetings, query, category).sort((a, b) =>
+  const normalizedQuery = query.trim();
+  const filtered = filterMeetings(meetings, '', category).sort((a, b) =>
     sort === 'newest'
       ? b.date.localeCompare(a.date)
       : a.date.localeCompare(b.date),
   );
+  const searchResults = searchMeetingLibrary(
+    meetings,
+    searchDocuments,
+    normalizedQuery,
+    category,
+  ).sort((a, b) =>
+    sort === 'newest'
+      ? b.meeting.date.localeCompare(a.meeting.date)
+      : a.meeting.date.localeCompare(b.meeting.date),
+  );
+  const visibleCount = normalizedQuery ? searchResults.length : filtered.length;
   const featured = meetings[0];
   return (
     <>
@@ -265,7 +293,7 @@ function Dashboard() {
               <Search size={17} />
               <input
                 aria-label="Search meetings"
-                placeholder="Search your meetings…"
+                placeholder="Search titles, summaries, transcripts…"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
               />
@@ -292,15 +320,19 @@ function Dashboard() {
             </label>
           </div>
         </div>
-        <div className="list-header">
-          <span>CONVERSATION</span>
-          <span>PARTICIPANTS</span>
-          <span>DURATION</span>
-          <span>DATE</span>
-          <span />
-        </div>
+        {!normalizedQuery && (
+          <div className="list-header">
+            <span>CONVERSATION</span>
+            <span>PARTICIPANTS</span>
+            <span>DURATION</span>
+            <span>DATE</span>
+            <span />
+          </div>
+        )}
         <div className="meeting-list" aria-live="polite">
-          {filtered.length ? (
+          {normalizedQuery && searchResults.length ? (
+            <MeetingSearchResults results={searchResults} query={normalizedQuery} />
+          ) : !normalizedQuery && filtered.length ? (
             filtered.map((meeting) => (
               <MeetingRow key={meeting.id} meeting={meeting} />
             ))
@@ -308,7 +340,10 @@ function Dashboard() {
             <div className="empty-state">
               <Search size={30} />
               <h3>No meetings found</h3>
-              <p>Try a different title, summary phrase, or participant.</p>
+              <p>
+                Try a different title, summary phrase, transcript quote, or
+                participant.
+              </p>
               <button
                 className="secondary-button"
                 onClick={() => {
@@ -323,7 +358,7 @@ function Dashboard() {
         </div>
         <div className="library-footer">
           <span>
-            Showing {filtered.length} of {meetings.length} meetings
+            Showing {visibleCount} of {meetings.length} meetings
           </span>
           <span>
             <ShieldCheck size={14} /> 1 real recording · 3 synthetic examples
@@ -390,14 +425,47 @@ function MeetingRow({ meeting }: { meeting: Meeting }) {
 
 function MeetingPreview() {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
   const meeting = meetings.find((item) => item.id === id);
+  const searchQuery = searchParams.get('q')?.trim() ?? '';
+  const timestampParameter = searchParams.get('t');
+  const requestedTimestamp = Number(timestampParameter);
+  const searchDocument = searchDocuments.find(
+    (document) => document.meetingId === meeting?.id,
+  );
+  const searchMatches = meeting
+    ? searchMeeting(meeting, searchDocument, searchQuery)
+    : [];
+  const initialSeek =
+    meeting &&
+    timestampParameter !== null &&
+    Number.isFinite(requestedTimestamp) &&
+    requestedTimestamp >= 0 &&
+    requestedTimestamp <= meeting.duration
+      ? requestedTimestamp
+      : undefined;
   const [copyState, setCopyState] = useState('Copy overview');
   useEffect(() => {
     document.title = `${meeting?.title ?? 'Meeting not found'} · Tavrex AI`;
   }, [meeting]);
+  useEffect(() => {
+    if (!searchQuery || meeting?.provenance === 'reference-recording') return;
+    window.requestAnimationFrame(() =>
+      document
+        .getElementById('search-context')
+        ?.scrollIntoView({ block: 'start', behavior: 'auto' }),
+    );
+  }, [meeting, searchQuery]);
   if (!meeting) return <NotFound />;
   if (meeting.provenance === 'reference-recording')
-    return <RecordingMeeting key={meeting.id} meeting={meeting} />;
+    return (
+      <RecordingMeeting
+        key={`${meeting.id}-${initialSeek ?? 'start'}`}
+        meeting={meeting}
+        initialSeek={initialSeek}
+        searchQuery={searchQuery}
+      />
+    );
   async function copyOverview() {
     if (!meeting) return;
     try {
@@ -442,10 +510,47 @@ function MeetingPreview() {
       <div className="preview-banner">
         <ShieldCheck size={18} />
         <p>
-          Original synthetic meeting with sample analysis. Recording playback
-          and timestamped transcripts are not available in this checkpoint.
+          Original synthetic meeting with sample analysis. Full recording
+          playback and a complete transcript are not available for this example.
         </p>
       </div>
+      {searchQuery && searchMatches.length > 0 && (
+        <section
+          className="meeting-search-context"
+          id="search-context"
+          aria-labelledby="meeting-search-context-title"
+        >
+          <div className="meeting-search-context-heading">
+            <span>
+              <Search size={17} />
+            </span>
+            <div>
+              <span className="small-label">OPENED FROM SEARCH</span>
+              <h2 id="meeting-search-context-title">Matching conversation context</h2>
+            </div>
+          </div>
+          <p className="meeting-search-query">
+            Showing evidence for “{searchQuery}”. Synthetic excerpts remain
+            clearly labeled and do not imply available media.
+          </p>
+          <div className="meeting-search-context-list">
+            {searchMatches.slice(0, 3).map((match) => (
+              <article key={match.id}>
+                <div>
+                  <span>{match.kind}</span>
+                  {match.speaker && <strong>{match.speaker}</strong>}
+                  {match.timestamp !== undefined && (
+                    <time>{formatTime(match.timestamp)} sample timestamp</time>
+                  )}
+                </div>
+                <p>
+                  <HighlightText text={match.text} query={searchQuery} />
+                </p>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
       <div className="overview-grid">
         <section className="overview-card">
           <div className="card-heading">
@@ -488,8 +593,8 @@ function MeetingPreview() {
           <div className="next-step-note">
             <FileText size={18} />
             <p>
-              This preview establishes the meeting layout. Sourced action items
-              arrive with the transcript checkpoint.
+              Search can open labeled excerpts from this synthetic conversation.
+              The recorded demo includes source-linked playback and action items.
             </p>
           </div>
         </aside>

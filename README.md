@@ -5,8 +5,8 @@ meetings → playback and transcript → summaries → sourced actions → momen
 
 ## Current status
 
-**Checkpoints 0 through D completed and verified. Live: https://tavrex-ai.pages.dev**
-The playback, transcript, intelligence, and public-moment showcase is implemented.
+**Checkpoints 0 through E completed and verified. Live: https://tavrex-ai.pages.dev**
+The playback, transcript, intelligence, public-moment, and search showcase is implemented.
 
 Working features:
 - Responsive, no-login library with one real reference recording and three original synthetic examples.
@@ -20,12 +20,12 @@ Working features:
 - Public, no-login moment links that seek the real recording, show transcript context,
   and pause at the shared range end without transcoding.
 - Loading, buffering, failure/retry, and empty-transcript states.
-- Search titles, sample summaries, and participants; category filters and date sorting.
+- Search titles, summaries, participants, and transcript content across meetings,
+  with highlighted contextual passages and source-specific destination links.
 - Meeting overview routes, copy overview, missing-meeting recovery, keyboard-accessible help.
 - Explicit synthetic data labels and no reference account information in fixtures.
 
-Not implemented yet: live AI generation, transcript-context search,
-upload/transcription, and private storage.
+Not implemented yet: live AI generation, upload/transcription, and private storage.
 No live bot, calendar connection, or authentication is represented as functional.
 
 ## Run locally
@@ -60,6 +60,7 @@ Browser → Cloudflare Pages → React app → Public metadata
                                      → Recording JSON + cached intelligence
                                      → Sanitized WebM on meeting open
                                      → Self-contained public moment route
+                                     → Typed local cross-meeting search index
 ```
 
 A narrow Pages Function serves byte ranges for the one public demo video.
@@ -127,5 +128,5 @@ they do not constitute testing on a physical iPhone or in Safari.
 
 ## Next checkpoints
 
-Transcript-context search → real ingestion → submission checks.
+Real ingestion → submission checks.
 No bonus work before these are safe.

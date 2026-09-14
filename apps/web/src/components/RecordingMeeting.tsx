@@ -10,6 +10,7 @@ import {
   Pause,
   Play,
   RotateCcw,
+  Search,
   Users,
 } from 'lucide-react';
 import { formatTime, type Meeting } from '../../../../packages/shared/meeting';
@@ -24,7 +25,15 @@ import { MeetingIntelligence } from './MeetingIntelligence';
 import { MeetingMoments, type MomentDraft } from './MeetingMoments';
 import './recording.css';
 
-export function RecordingMeeting({ meeting }: { meeting: Meeting }) {
+export function RecordingMeeting({
+  meeting,
+  initialSeek,
+  searchQuery,
+}: {
+  meeting: Meeting;
+  initialSeek?: number;
+  searchQuery?: string;
+}) {
   const [recording, setRecording] = useState<Recording | null>(null);
   const [error, setError] = useState(false);
   const [attempt, setAttempt] = useState(0);
@@ -102,7 +111,12 @@ export function RecordingMeeting({ meeting }: { meeting: Meeting }) {
           </button>
         </section>
       ) : recording ? (
-        <RecordingExperience key={meeting.id} recording={recording} />
+        <RecordingExperience
+          key={meeting.id}
+          recording={recording}
+          initialSeek={initialSeek}
+          searchQuery={searchQuery}
+        />
       ) : (
         <section className="recording-load-state" role="status">
           <LoaderCircle className="loading-icon" size={26} />
@@ -114,11 +128,22 @@ export function RecordingMeeting({ meeting }: { meeting: Meeting }) {
   );
 }
 
-function RecordingExperience({ recording }: { recording: Recording }) {
+function RecordingExperience({
+  recording,
+  initialSeek,
+  searchQuery,
+}: {
+  recording: Recording;
+  initialSeek?: number;
+  searchQuery?: string;
+}) {
+  const initialTime = boundedTime(initialSeek ?? 0, recording.duration);
   const video = useRef<HTMLVideoElement>(null);
-  const pendingSeek = useRef<number | null>(null);
+  const pendingSeek = useRef<number | null>(
+    initialSeek === undefined ? null : initialTime,
+  );
   const transcript = useRef<HTMLDivElement>(null);
-  const [time, setTime] = useState(0);
+  const [time, setTime] = useState(initialTime);
   const [duration, setDuration] = useState(recording.duration);
   const [playing, setPlaying] = useState(false);
   const [state, setState] = useState<
@@ -211,9 +236,32 @@ function RecordingExperience({ recording }: { recording: Recording }) {
     });
   }
 
+  function showSearchContext() {
+    if (initialSeek === undefined) return;
+    seek(initialSeek);
+    const segmentId = activeSegment(recording.segments, initialSeek);
+    const row = segmentId
+      ? transcript.current?.querySelector<HTMLElement>(
+          `[data-segment-id="${CSS.escape(segmentId)}"]`,
+        )
+      : null;
+    row?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }
+
   return (
     <div className="recording-layout">
       <section className="recording-column" aria-label="Meeting recording">
+        {searchQuery && initialSeek !== undefined && (
+          <div className="recording-search-arrival" id="search-context">
+            <span>
+              <Search size={16} /> Transcript match
+            </span>
+            <p>
+              Opened at {formatTime(initialSeek)} for “{searchQuery}”.
+            </p>
+            <button onClick={showSearchContext}>View transcript context</button>
+          </div>
+        )}
         <div className="player-frame">
           <video
             ref={video}

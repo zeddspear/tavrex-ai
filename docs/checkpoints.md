@@ -216,3 +216,41 @@ meeting title only through the media accessibility label. The title is now visib
 rendered with the required meeting summary. The corrected immutable deployment is
 https://8dbe49e0.tavrex-ai.pages.dev; all 9 local and all 9 public moment checks
 passed across Chromium, Firefox, and mobile emulation after this correction.
+
+## E — Cross-meeting contextual search
+
+Implementation:
+- The meeting library searches title, summary, participant, and transcript text
+  across all four public demo meetings. Category filters continue to intersect the
+  query, while clearing search restores the existing sorted library.
+- Results are grouped by meeting and expose source type, highlighted contextual
+  passages, speaker identity, and timestamp where available. Empty searches explain
+  which fields can be searched and provide a working reset action.
+- A real transcript result opens the recorded meeting at its source time. Media seeks
+  after metadata loads, the matching speaker turn becomes active, and “View transcript
+  context” brings the source row into view. Synthetic transcript results open a
+  clearly labeled context panel and never imply that playable media exists.
+- The public search index is Zod-validated for unique meeting/segment identities and
+  bounded timestamps. Search is local and synchronous, so no artificial loading or
+  failure state is shown; those states would misrepresent this implementation.
+
+Validation:
+- Strict typecheck, ESLint, production build, and 26 Vitest checks passed.
+- The full local Playwright suite passed 48 scenarios across Chromium, Firefox, and
+  mobile emulation, with 3 intentional project-specific skips. Search coverage includes
+  multiple contextual results, category intersection, title/summary/participant
+  matches, empty-state recovery, responsive containment, synthetic navigation, and
+  a decoded media seek to the real participant turn at 1:37.
+- The 1440px result composition was rendered and visually inspected. A separate local
+  browser pass exercised the 1:37 search arrival and confirmed the participant source.
+- Final immutable deployment: https://b10fac7a.tavrex-ai.pages.dev (canonical:
+  https://tavrex-ai.pages.dev). The same complete Playwright suite passed publicly:
+  48 passed and 3 intentional skips. A clean canonical-browser inspection opened the
+  1:37 transcript result, rendered its source turn, and reported no console errors.
+
+Limit: search uses a deliberately small lexical public index. Synthetic examples
+contain labeled excerpts rather than complete recordings. Semantic/vector retrieval
+and private indexed storage remain outside this checkpoint.
+
+Next: Checkpoint F — real upload, processing, and transcription. No ingestion or
+Tier C bonus functionality was started in this checkpoint.

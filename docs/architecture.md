@@ -1,4 +1,4 @@
-# Showcase architecture through Checkpoint D
+# Showcase architecture through Checkpoint E
 
 ```text
 Clean browser → Cloudflare Pages → React / Vite SPA
@@ -10,6 +10,8 @@ Clean browser → Cloudflare Pages → React / Vite SPA
                  Cached summaries + sourced actions
                               ↓
              Browser-persisted moments + public deep links
+                              ↓
+              Typed cross-meeting contextual search index
 ```
 
 No runtime secrets, login, private database rows, or external media hosts are
@@ -78,3 +80,12 @@ at the range end. It renders no private workspace navigation or identifiers.
 This is suitable for the public assessment fixture. Production user moments still
 need authenticated persistence and opaque server-resolved share tokens as defined
 in the specification.
+
+Cross-meeting search runs against a small, Zod-validated public index covering all
+four demo meetings. It matches title, summary, participant, and transcript text,
+then returns the source type, speaker, contextual passage, and timestamp when one
+exists. A transcript result for the real recording opens the meeting, applies the
+source time after media metadata loads, highlights the active speaker turn, and can
+return the transcript row to view. Synthetic passages are explicitly labeled and
+open matching context without implying that media exists. Search remains lexical
+and synchronous; semantic/vector infrastructure is unnecessary for this checkpoint.

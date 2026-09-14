@@ -20,7 +20,7 @@ test('clean reviewer can explore, filter, sort, recover, and open a meeting', as
   await expect(page.locator('.meeting-row')).toHaveCount(1);
   await page.getByRole('button', { name: 'All meetings', exact: true }).click();
   await page.getByRole('textbox', { name: 'Search meetings' }).fill('pilot');
-  await expect(page.locator('.meeting-row')).toHaveCount(2);
+  await expect(page.locator('.search-result-card')).toHaveCount(2);
   await page
     .getByRole('textbox', { name: 'Search meetings' })
     .fill('no-such-meeting');
