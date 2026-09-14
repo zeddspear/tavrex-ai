@@ -99,7 +99,8 @@ source timestamps. No C or bonus functionality was started in this iteration.
 
 Implementation:
 - The real recording now includes an intelligence panel beside the player and a
-  full-width transcript below, preserving the readable playback/transcript flow.
+  transcript beneath the player in the left column, preserving the readable
+  playback/transcript flow.
 - General, Sales / Customer, and Recruiting / Interview are three cached,
   materially distinct analysis views. Each changes the title, executive framing,
   and sections instead of merely changing a tab label.
@@ -138,3 +139,30 @@ and customization remain intentionally deferred.
 
 Next: Checkpoint D — create a saved moment and make its public timestamped share
 route work in a clean browser. No D or bonus functionality was started here.
+
+### Meeting-detail layout correction
+
+After Checkpoint C, the sticky `.recording-column` was constrained by the whole
+two-row grid rather than the player row. It stayed pinned while the separate,
+full-width transcript row moved underneath it, producing the reported overlap.
+The transcript's 650px nested scroller compounded the collision.
+
+The grid now names explicit player, transcript, and intelligence areas. Player and
+transcript remain in normal flow in the left column; only intelligence is sticky
+in the right column, with a 24px offset and viewport-bounded internal scrolling.
+At 1100px and below it becomes static and the areas stack player, intelligence,
+then transcript. Follow Playback now brings the active transcript row into the
+page viewport instead of scrolling a removed nested container.
+
+Verification:
+- 1920×1080, 1440×900, 1024×768, and 390×844 were checked at top, intermediate,
+  and bottom scroll positions. Column/stack order, child containment, and document
+  width are asserted in `tests/recording-layout.spec.ts`.
+- Local suite: 24 passed, 3 intentional project-specific skips. ESLint, strict
+  typecheck, and production build passed.
+- Public immutable deployment: https://13c0cb3e.tavrex-ai.pages.dev. Layout matrix
+  passed, and 15 meeting-detail interaction checks passed across Chromium,
+  Firefox, and mobile emulation; 2 layout-project skips were intentional.
+- Video controls, transcript timestamps, all three summary templates, action
+  timestamps, Follow Playback, loading/error recovery, and pre-metadata seeks
+  remained operational.

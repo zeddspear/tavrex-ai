@@ -93,10 +93,13 @@ test('featured real meeting plays, seeks, changes speed and follows the speaker'
   await expect
     .poll(() =>
       page
-        .locator('.transcript-scroll')
-        .evaluate((element) => element.scrollTop),
+        .locator('[data-segment-id="participant-turn"]')
+        .evaluate((element) => {
+          const bounds = element.getBoundingClientRect();
+          return bounds.top >= 0 && bounds.bottom <= innerHeight;
+        }),
     )
-    .toBeGreaterThan(0);
+    .toBe(true);
   await page.getByRole('checkbox', { name: 'Follow playback' }).uncheck();
   await expect(
     page.getByRole('checkbox', { name: 'Follow playback' }),

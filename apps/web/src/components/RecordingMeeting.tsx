@@ -133,11 +133,7 @@ function RecordingExperience({ recording }: { recording: Recording }) {
     const row = container?.querySelector<HTMLElement>(
       `[data-segment-id="${CSS.escape(activeId)}"]`,
     );
-    if (container && row)
-      container.scrollTo({
-        top: row.offsetTop - 12,
-        behavior: 'auto',
-      });
+    row?.scrollIntoView({ block: 'center', behavior: 'auto' });
   }, [activeId, follow, playing]);
 
   useEffect(() => {
