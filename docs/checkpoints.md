@@ -341,11 +341,10 @@ are not claimed as individually tested. Safari and physical devices were not tes
 Next: Checkpoint G — submission readiness, public repository verification, and the
 camera-on walkthrough of no more than five minutes. No Tier C work was started.
 
-## G — Submission readiness audit (walkthrough link pending)
+## G — Submission readiness audit (before candidate scope change)
 
-The final camera-on walkthrough is the one outstanding hand-in artifact; the user
-will provide it after the rest of the checkpoint is prepared. No video or duration
-is claimed as verified yet.
+At the time of this audit, the camera-on walkthrough was the one outstanding
+hand-in artifact. No video or duration was claimed as verified.
 
 Prepared and verified:
 
@@ -376,6 +375,14 @@ Prepared and verified:
   a new processing state and a separately preprocessed private meeting honestly
   within five minutes.
 
-Pending before marking G complete: receive the user's camera-on walkthrough, verify
-that its public link opens externally and lasts no more than five minutes, then fill
-its submission field. This is a required assessment artifact, not bonus scope.
+The audit initially left the required camera-on walkthrough pending. The candidate
+later changed that direction, as recorded below.
+
+### Candidate scope change
+
+The candidate subsequently directed us to exclude the walkthrough and focus the
+review on implemented product functionality. The live app, public repository,
+capture evidence, and validation above remain verified. The official assessment
+brief still requires the camera-on video, so Checkpoint G cannot be marked formally
+complete; no recording or link will be requested under this direction. The root
+review guide and README now describe the product route without a video field.

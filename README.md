@@ -125,8 +125,10 @@ local login; never paste tokens into chat or put secrets in browser variables.
 
 - Live URL: https://tavrex-ai.pages.dev
 - Public repository URL: https://github.com/zeddspear/tavrex-ai (public; full implementation on the default branch).
-- Walkthrough URL: pending user camera-on recording, no longer than 5 minutes.
-- [Timed route and reviewer notes](SUBMISSION.md).
+- [Product review route and notes](SUBMISSION.md).
+
+The candidate chose to omit the camera-on walkthrough. The assessment brief
+still lists it as a required artifact, so formal hand-in completeness is not claimed.
 
 Current acceptance evidence: [checkpoint report](docs/checkpoints.md). Production
 browser checks can be repeated with
@@ -137,5 +139,5 @@ they do not constitute testing on a physical iPhone or in Safari.
 
 ## Next checkpoints
 
-Checkpoint G — submission checks, public repository, and the camera-on walkthrough.
-No bonus work before these are safe.
+The public product and repository are ready for review. The official video
+hand-in requirement remains unmet by candidate choice. No bonus work is claimed.
