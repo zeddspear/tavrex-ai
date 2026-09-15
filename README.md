@@ -5,8 +5,8 @@ meetings → playback and transcript → summaries → sourced actions → momen
 
 ## Current status
 
-**Checkpoints 0 through E completed and verified. Live: https://tavrex-ai.pages.dev**
-The playback, transcript, intelligence, public-moment, and search showcase is implemented.
+**Checkpoints 0 through F completed and verified. Live: https://tavrex-ai.pages.dev**
+The playback, transcript, intelligence, public-moment, search, and private ingestion flows are implemented.
 
 Working features:
 - Responsive, no-login library with one real reference recording and three original synthetic examples.
@@ -25,7 +25,9 @@ Working features:
 - Meeting overview routes, copy overview, missing-meeting recovery, keyboard-accessible help.
 - Explicit synthetic data labels and no reference account information in fixtures.
 
-Not implemented yet: live AI generation, upload/transcription, and private storage.
+Private uploads go directly to R2, receive live Whisper transcription and Llama analysis,
+and persist in Supabase behind a browser-scoped guest session. Failed analysis can
+retry using its saved transcript. See [ingestion setup and limits](docs/ingestion-setup.md).
 No live bot, calendar connection, or authentication is represented as functional.
 
 ## Run locally
@@ -37,7 +39,9 @@ npm ci
 npm run dev
 ```
 
-Open http://localhost:5173. No environment variables or account required.
+Open http://localhost:5173 for the public UI. No environment variables or account
+are required for that path. Private ingestion needs the configured full-stack
+preview described in [ingestion setup](docs/ingestion-setup.md).
 
 ```sh
 npm run lint
@@ -64,7 +68,8 @@ Browser → Cloudflare Pages → React app → Public metadata
 ```
 
 A narrow Pages Function serves byte ranges for the one public demo video.
-The ingestion API, Supabase, and R2 remain later checkpoints. Details: [architecture](docs/architecture.md).
+The same worker serves the private ingestion API, with Supabase, R2, and Workers AI.
+Details: [architecture](docs/architecture.md).
 
 ## Deploy to Cloudflare Pages
 
@@ -93,11 +98,11 @@ local login; never paste tokens into chat or put secrets in browser variables.
 
 ## Assessment decisions and privacy
 
-- Upload-first capture is planned; conferencing bots are intentionally omitted.
+- Capture uses real file upload; conferencing bots are intentionally omitted.
 - The first checkpoint establishes reviewer entry before media/AI infrastructure.
 - The recorded demo uses a supplied real recording and imported reference transcript.
   It is not synthetic, but it is also not Tavrex-generated transcription. End-to-end
-  ingestion remains an unmet later requirement. The other three examples are synthetic.
+  ingestion is independently available through Upload recording. The other three examples are synthetic.
 - Its three summaries and action items are prepared, transcript-grounded demo output.
   Template switching does not call a model or imply live generation.
 - Raw Fathom materials remain excluded from Git. A sanitized, permissioned video
@@ -107,11 +112,12 @@ local login; never paste tokens into chat or put secrets in browser variables.
   evidence, inference, and Tavrex decisions. Screenshots are not publicly republished.
 - `.agent-logs/` is intentionally committed incrementally for assessment review.
   See [capture verification](CAPTURE-TEST.md). Historical entries remain untouched.
-- No paid services or live AI calls are required. The ~3.4 MB public demo video is
+- The public showcase requires no live AI calls. The ~3.4 MB public demo video is
   served through a media-only Pages Function because plain Pages assets do not
   return partial HTTP responses. Media requests consume the Functions free-tier
   quota; app pages remain static. The handler is capped at 12 MB and is not intended
-  for arbitrary uploads. Private R2 storage and upload quotas are not yet implemented.
+  for arbitrary uploads. Private uploads use R2 and live Workers AI within bounded
+  demo quotas; provider free-tier limits still apply.
 
 ## Submission
 
@@ -128,5 +134,5 @@ they do not constitute testing on a physical iPhone or in Safari.
 
 ## Next checkpoints
 
-Real ingestion → submission checks.
+Checkpoint G — submission checks, public repository, and the camera-on walkthrough.
 No bonus work before these are safe.

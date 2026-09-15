@@ -29,7 +29,7 @@ const summaryTemplateSchema = z.object({
     .array(
       z.object({
         title: z.string().min(1),
-        items: z.array(sourcedTextSchema).min(1),
+        items: z.array(sourcedTextSchema),
       }),
     )
     .min(2),
@@ -43,10 +43,22 @@ const actionItemSchema = z.object({
   source: z.number().nonnegative(),
 });
 
-const intelligenceSchema = z.object({
-  provenance: z.literal('prepared-demo'),
+export const intelligenceSchema = z.object({
+  provenance: z.enum(['prepared-demo', 'generated']),
   templates: z.array(summaryTemplateSchema).length(3),
-  actions: z.array(actionItemSchema).min(1),
+  actions: z.array(actionItemSchema),
+});
+
+const generatedViewSchema = summaryTemplateSchema.omit({
+  key: true,
+  label: true,
+  descriptor: true,
+});
+export const generatedAnalysisSchema = z.object({
+  general: generatedViewSchema,
+  sales_customer: generatedViewSchema,
+  recruiting_interview: generatedViewSchema,
+  actions: z.array(actionItemSchema),
 });
 
 export const meetingMomentSchema = z

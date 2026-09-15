@@ -1,4 +1,4 @@
-# Showcase architecture through Checkpoint E
+# Showcase architecture through Checkpoint F
 
 ```text
 Clean browser → Cloudflare Pages → React / Vite SPA
@@ -21,13 +21,13 @@ fetch transcripts or video. Media uses `preload="metadata"` and native browser
 controls. Plain Pages assets returned HTTP 200 for Range requests in production,
 which broke seeking despite passing locally. A narrow Pages Function now returns
 correct 206 responses for the one public video. `_routes.json` invokes it only
-for that exact media path; all other app assets remain static.
+for that media path and `/api/*`; app assets remain static.
 
 `apps/worker/src/index.ts` reads the public asset through the built-in ASSETS
 binding and slices validated byte ranges. It supports GET, HEAD, open/suffix
 ranges, invalid-range 416 responses and If-Range fallback. It limits the asset
 to 12 MB, keeping this scoped to the ~3.4 MB reference fixture. This is not the
-architecture for large private recordings; those still require R2. Media requests
+architecture for large private recordings; those use the separate private R2 ingestion flow below. Media requests
 use the Pages Functions free-tier quota. No new account, binding secrets, or
 paid resource is required.
 
@@ -43,8 +43,8 @@ and [Pages advanced-mode ASSETS binding](https://developers.cloudflare.com/pages
 turns, intelligence-template keys, and every summary/action source bound. Imported
 source timestamps are in seconds. Clicking one
 sets the real media element's `currentTime`; clicks before metadata are queued.
-Playback events drive time and active-turn state. Follow-scroll only moves the
-transcript container, and only during playback when enabled.
+Playback events drive time and active-turn state. Follow-scroll brings the active transcript row into the page viewport, only during
+playback when enabled.
 
 Meeting-data failures have a 15-second timeout and retry. Media errors retain the
 transcript. Slow loading/buffering displays a connection notice and reload action.
@@ -61,12 +61,11 @@ meeting JSON loading, validation failure, and retry states cover this data.
 The analysis is a prepared demo fixture grounded in the supplied transcript and
 summary evidence. The UI discloses that Tavrex did not run a live model for this
 recording. This keeps reviewer behavior reliable without representing seeded output
-as a live AI service. Real generation remains part of the ingestion checkpoint.
+as a live AI service. New uploads use live generation through the ingestion flow below.
 
 The sanitized video is a deliberately public static asset. Its source recording
 and unredacted references remain ignored. This is not a private-media architecture;
-future user uploads require the specified Workers, Supabase and R2 services with
-authorization. No live AI or ingestion capability is claimed at this checkpoint.
+user uploads use Workers, Supabase and R2 with browser-scoped authorization.
 
 Moments use the specification’s timestamp-reference approach rather than video
 transcoding. The seeded public recording includes one validated shareable moment.
@@ -89,3 +88,39 @@ source time after media metadata loads, highlights the active speaker turn, and 
 return the transcript row to view. Synthetic passages are explicitly labeled and
 open matching context without implying that media exists. Search remains lexical
 and synchronous; semantic/vector infrastructure is unnecessary for this checkpoint.
+
+
+## Private upload and processing
+
+```text
+Browser → Worker: create private meeting / short-lived signed PUT
+Browser → R2: media bytes directly to staging object
+Browser → Worker: process / check state
+Worker → R2: verify and freeze playback object
+Worker → Whisper: actual timestamped transcript
+Worker → Supabase: store transcript before analysis
+Worker → Llama: three validated summary views and sourced actions
+Browser → same recording UI: authorized media ranges + persisted results
+```
+
+`apps/worker/src/ingestion.ts` scopes every data operation to the digest of an
+HttpOnly guest cookie. RLS blocks direct anonymous/authenticated Supabase access;
+only the server service role accesses private rows. Private media is streamed from
+R2 through an authorized no-store route with range support. Neither storage keys
+nor credentials are returned in meeting metadata. A signed PUT targets staging;
+processed playback uses a separate object to prevent later overwrites.
+
+`UploadMeeting.tsx` provides the upload form, progress/recovery UI, private library,
+and adapter into the existing `RecordingExperience`. Public fixture paths remain
+independent of backend availability. Stored private transcripts and summaries are
+also searchable in the owner's library; private moments remain local and cannot
+create public share links.
+
+Provider timestamps are normalized without fabricated speaker identities. Model
+output is schema-validated; unsupported summary sections can be empty. Template
+keys, labels, and provenance are assigned by the server. A failed analysis retains
+the playable transcript; retry skips transcription. Atomic leases and SQL quotas
+bound concurrent work and demo usage. Processing runs within the request, without
+an additional queue; interruptions are recoverable through the UI.
+
+See [setup, verification, limits, and retention](ingestion-setup.md).

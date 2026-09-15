@@ -43,6 +43,7 @@ export function MeetingMoments({
   onCloseDraft,
   onSeek,
   seekDisabled,
+  privateMeeting = false,
 }: {
   meetingId: string;
   duration: number;
@@ -51,6 +52,7 @@ export function MeetingMoments({
   onCloseDraft: () => void;
   onSeek: (time: number) => void;
   seekDisabled: boolean;
+  privateMeeting?: boolean;
 }) {
   const panel = useRef<HTMLElement>(null);
   const [moments, setMoments] = useState(() => {
@@ -96,7 +98,9 @@ export function MeetingMoments({
       );
       setSaveNotice('Moment saved to this meeting.');
     } catch {
-      setSaveNotice('Moment saved for this visit. Browser storage is unavailable.');
+      setSaveNotice(
+        'Moment saved for this visit. Browser storage is unavailable.',
+      );
     }
     onCloseDraft();
   }
@@ -121,7 +125,11 @@ export function MeetingMoments({
           <h2>
             Moments <span>{moments.length}</span>
           </h2>
-          <p>Save the part worth returning to or sharing.</p>
+          <p>
+            {privateMeeting
+              ? 'Saved moments stay in this browser.'
+              : 'Save the part worth returning to or sharing.'}
+          </p>
         </div>
       </div>
 
@@ -133,6 +141,7 @@ export function MeetingMoments({
           draft={draft}
           onCancel={onCloseDraft}
           onSave={saveMoment}
+          privateMeeting={privateMeeting}
         />
       )}
 
@@ -160,33 +169,37 @@ export function MeetingMoments({
                   {moment.note && <p>{moment.note}</p>}
                   <span>
                     {formatTime(moment.startMs / 1000)}–
-                    {formatTime(Math.ceil(moment.endMs / 1000))} · Public link includes
-                    this range
+                    {formatTime(Math.ceil(moment.endMs / 1000))} ·{' '}
+                    {privateMeeting
+                      ? 'Private moment'
+                      : 'Public link includes this range'}
                   </span>
                 </div>
-                <div className="moment-actions">
-                  <button
-                    className="moment-action"
-                    onClick={() => void copyLink(moment)}
-                    aria-label={`Copy public link for ${moment.title}`}
-                  >
-                    <Copy size={14} /> Copy link
-                  </button>
-                  <a
-                    className="moment-action"
-                    href={sharePath}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label={`Open public view for ${moment.title}`}
-                  >
-                    <ExternalLink size={14} /> Open public view
-                  </a>
-                  {copyState?.id === moment.id && (
-                    <span className="moment-copy-status" role="status">
-                      {copyState.message}
-                    </span>
-                  )}
-                </div>
+                {!privateMeeting && (
+                  <div className="moment-actions">
+                    <button
+                      className="moment-action"
+                      onClick={() => void copyLink(moment)}
+                      aria-label={`Copy public link for ${moment.title}`}
+                    >
+                      <Copy size={14} /> Copy link
+                    </button>
+                    <a
+                      className="moment-action"
+                      href={sharePath}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={`Open public view for ${moment.title}`}
+                    >
+                      <ExternalLink size={14} /> Open public view
+                    </a>
+                    {copyState?.id === moment.id && (
+                      <span className="moment-copy-status" role="status">
+                        {copyState.message}
+                      </span>
+                    )}
+                  </div>
+                )}
               </article>
             );
           })
@@ -207,12 +220,14 @@ function MomentComposer({
   draft,
   onCancel,
   onSave,
+  privateMeeting,
 }: {
   meetingId: string;
   duration: number;
   draft: MomentDraft;
   onCancel: () => void;
   onSave: (moment: MeetingMoment) => void;
+  privateMeeting: boolean;
 }) {
   const [title, setTitle] = useState(`Moment at ${formatTime(draft.start)}`);
   const [note, setNote] = useState('');
@@ -323,8 +338,9 @@ function MomentComposer({
         </p>
       )}
       <p className="moment-share-hint">
-        Anyone with the public link can view this title, note, range, and its
-        transcript context.
+        {privateMeeting
+          ? 'This moment is saved locally in your browser. Uploaded recordings are not shared publicly.'
+          : 'Anyone with the public link can view this title, note, range, and its transcript context.'}
       </p>
       <div className="moment-form-actions">
         <button type="button" className="secondary-button" onClick={onCancel}>

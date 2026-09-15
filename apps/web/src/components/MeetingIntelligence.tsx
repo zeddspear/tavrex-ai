@@ -39,7 +39,11 @@ export function MeetingIntelligence({
           </span>
           <div>
             <h2 id="intelligence-title">Tavrex intelligence</h2>
-            <p>Prepared analysis · grounded in this recording</p>
+            <p>
+              {intelligence.provenance === 'generated'
+                ? 'AI analysis · grounded in your transcript'
+                : 'Prepared analysis · grounded in this recording'}
+            </p>
           </div>
         </div>
         <span className="ready-pill">
@@ -69,6 +73,11 @@ export function MeetingIntelligence({
           {active.sections.map((section) => (
             <section key={section.title}>
               <h4>{section.title}</h4>
+              {section.items.length === 0 && (
+                <p className="analysis-disclosure">
+                  No supported findings in this conversation.
+                </p>
+              )}
               <ul>
                 {section.items.map((item) => (
                   <li key={`${item.source}-${item.text}`}>
@@ -95,6 +104,11 @@ export function MeetingIntelligence({
           <small>{intelligence.actions.length} extracted</small>
         </div>
         <div className="action-list">
+          {intelligence.actions.length === 0 && (
+            <p>
+              No supported action items were identified in this conversation.
+            </p>
+          )}
           {intelligence.actions.map((action, index) => (
             <article className="action-card" key={action.id}>
               <span className="action-index" aria-hidden="true">
@@ -124,8 +138,9 @@ export function MeetingIntelligence({
       </section>
 
       <p className="analysis-disclosure">
-        Prepared demo output from the supplied transcript. Tavrex did not run a
-        live model for this recording.
+        {intelligence.provenance === 'generated'
+          ? 'Generated from this recording. Check the cited transcript before acting on a summary.'
+          : 'Prepared demo output from the supplied transcript. Tavrex did not run a live model for this recording.'}
       </p>
     </section>
   );

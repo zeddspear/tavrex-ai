@@ -25,6 +25,7 @@ create table public.uploaded_meetings (
   -- A lease prevents concurrent retry requests from duplicating model work.
   processing_started_at timestamptz,
   processing_lease uuid,
+  processing_attempts integer not null default 0 check (processing_attempts between 0 and 3),
   media_uploaded_at timestamptz,
   transcript jsonb check (jsonb_typeof(transcript) = 'array'),
   intelligence jsonb check (jsonb_typeof(intelligence) = 'object'),
@@ -43,5 +44,27 @@ revoke all on public.uploaded_meetings from anon, authenticated;
 grant select, insert, update, delete on public.uploaded_meetings to service_role;
 -- Deliberately no public RLS policy: uploaded media/transcripts are never public
 -- fixtures, and direct browser access to Supabase is prohibited.
+
+create function public.reserve_upload(p_owner text, p_title text, p_filename text,
+  p_type text, p_size bigint, p_duration double precision)
+returns setof public.uploaded_meetings language plpgsql security definer
+set search_path = public as $$
+declare new_id uuid := gen_random_uuid();
+begin
+  perform pg_advisory_xact_lock(873241);
+  if (select count(*) from uploaded_meetings) >= 100
+    or (select count(*) from uploaded_meetings where created_at > now() - interval '1 day') >= 20
+    or (select count(*) from uploaded_meetings where owner_hash = p_owner
+      and created_at > now() - interval '1 day') >= 3 then
+    raise exception 'upload_quota_reached';
+  end if;
+  return query insert into uploaded_meetings
+    (id, owner_hash, title, original_filename, media_type, storage_key, media_size, duration_seconds)
+    values (new_id, p_owner, p_title, p_filename, p_type, 'uploads/' || new_id::text,
+      p_size, p_duration) returning *;
+end;
+$$;
+revoke all on function public.reserve_upload(text, text, text, text, bigint, double precision) from public, anon, authenticated;
+grant execute on function public.reserve_upload(text, text, text, text, bigint, double precision) to service_role;
 
 commit;

@@ -1,4 +1,5 @@
 /** Byte ranges for the single deliberately public demo asset. Not an upload API. */
+import { ingestionApi, type IngestionEnv } from './ingestion';
 export const PUBLIC_MEDIA_PATH = '/media/recording-walkthrough-optimized.webm';
 
 type AssetBinding = { fetch(request: Request): Promise<Response> };
@@ -29,8 +30,10 @@ export function parseRange(value: string | null, size: number): ByteRange {
 export default {
   async fetch(
     request: Request,
-    env: { ASSETS: AssetBinding },
+    env: { ASSETS: AssetBinding } & Partial<IngestionEnv>,
   ): Promise<Response> {
+    if (new URL(request.url).pathname.startsWith('/api/'))
+      return ingestionApi(request, env as IngestionEnv);
     if (new URL(request.url).pathname !== PUBLIC_MEDIA_PATH)
       return env.ASSETS.fetch(request);
     if (request.method !== 'GET' && request.method !== 'HEAD') {

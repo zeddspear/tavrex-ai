@@ -1,58 +1,71 @@
-# Checkpoint F setup — pending access
+# Private ingestion setup
 
-Checkpoint E remains the deployed product. The ingestion contract and SQL migration
-are preparation only; no upload UI or transcription capability has been deployed.
+The public A–E showcase works without credentials. Private uploads additionally
+require Supabase, a private R2 bucket, and the Workers AI binding in `wrangler.jsonc`.
 
-## Required access
+## Configure services
 
-Supply these server-only values in the already ignored `.dev.vars` file:
+Place the variable names from `.env.example` in ignored `.dev.vars`, with values
+supplied locally. Never use browser `VITE_` variables for these credentials.
+The R2 S3 token needs **Object Read & Write** access to the configured bucket.
+`SUPABASE_DB_URL` is used only for migration administration and is never deployed.
 
-```dotenv
-SUPABASE_URL=
-SUPABASE_SERVICE_ROLE_KEY=
-R2_ACCESS_KEY_ID=
-R2_SECRET_ACCESS_KEY=
+With Node 24, `psql`, and an authorized Wrangler login:
+
+```sh
+node scripts/ingestion-admin.mjs migrate
+node scripts/ingestion-admin.mjs storage
+node scripts/ingestion-admin.mjs secrets
+npm run deploy
 ```
 
-Use a Supabase project dedicated to Tavrex and an R2 token with Object Read & Write
-permissions. Never put these values in chat, a `VITE_` variable, or a tracked file.
-The Cloudflare login is available, but no R2 bucket or Pages secrets were configured
-when this checkpoint was inspected. Workers AI will use a server binding.
+The migration script applies `202609150001_private_ingestion.sql` once, then checks
+RLS and restricted browser-role access. Database credentials travel in the child
+process environment, and provider output is withheld. Storage setup configures
+PUT CORS for the canonical deployment and local development; changing the domain
+requires updating that allowlist. Six runtime secrets are sent to Pages via stdin.
 
-The migration at `supabase/migrations/202609150001_private_ingestion.sql` is ready
-for review and must be applied through the project's SQL editor or an authorized
-database connection before the API is enabled. It has not been applied here.
+For a local full-stack preview, build and run
+`npx wrangler pages dev apps/web/dist --port 8788`. The plain Vite development
+server serves the public UI only. Workers AI calls use the remote service.
 
-## Smallest complete flow
+## Behavior and bounds
 
-1. Validate the recording in the browser and on the server. Initial demo limits are
-   25 MB and 10 minutes, explicitly displayed to the uploader. This is a reduced
-   demo limit permitted by the specification's configurable-limits requirement.
-2. Create a private meeting row scoped to an opaque guest session. Set an HttpOnly,
-   Secure cookie; store only its digest in the database. Keep public fixture access
-   independent of this session.
-3. Issue a short-lived signed R2 PUT URL with the expected content type. Configure
-   bucket CORS for the application origin. Upload directly from the browser.
-4. Verify the stored object's size/type before invoking speech-to-text. Reject or
-   delete objects that violate the declared limits.
-5. Transcribe through Workers AI; normalize actual provider timestamps and persist
-   the transcript before requesting analysis. A neutral speaker label must be used
-   when speaker identity is unavailable.
-6. Reuse the existing meeting composition and timestamp seek behavior. Present real
-   processing, empty transcript, failure, and retry states. Analysis failure must
-   retain the transcript and retry without re-uploading or re-transcribing.
-7. Verify a real upload on the deployment, transcript persistence after reload,
-   isolation from a second browser, media seeking, retry, and the existing A–E suite.
+- Direct signed R2 PUTs expire after five minutes. The server checks stored size and
+  type, then copies the upload into a separate playback object so a reused PUT URL
+  cannot overwrite processed media. Media reads require the owner's session.
+- An HttpOnly, Secure, SameSite cookie identifies the guest browser for seven days.
+  Supabase stores only its SHA-256 digest. Losing cookies loses access; uploads are
+  not public fixtures. The API scopes every row read/write to that digest.
+- Limits: 25 MB, ten minutes, three uploads per browser per rolling day, twenty
+  across the workspace per rolling day, and one hundred rows total. The SQL
+  reservation is atomic. Free provider allowances still apply.
+- Processing uses an atomic three-minute lease and at most three processing
+  attempts per recording. Keep the tab open; this is a bounded request flow,
+  without a background job queue. Interrupted requests offer check/resume.
+- Whisper creates actual timestamped segments. Speaker identities are not inferred.
+  The transcript is stored before Llama generates three summary perspectives and
+  sourced actions. An analysis retry reuses the saved transcript. Unsupported
+  sections and missing commitments remain empty. Invalid output is rejected.
+- Private recordings reuse playback, transcript seeking, Follow Playback, summaries,
+  and local moments. Public sharing remains limited to the public showcase fixture.
+- There is no automatic retention cleanup or account-based recovery in this demo.
+  Storage cleanup is an administrator operation; the total-row cap bounds growth.
 
-Processing requests need an atomic lease with a stale timeout, and upload/model
-quotas must bound use of the free-tier services. No user-provided recording or
-transcript is added to public fixtures or assessment logs.
+## Verification
 
-## Provider references
+`npm run test:e2e` includes controlled upload-failure, retry, and empty-state tests.
+Real provider tests are opt-in to avoid consuming upload/model quotas on every run:
 
-- [Cloudflare R2 signed URLs](https://developers.cloudflare.com/r2/api/s3/presigned-urls/)
-- [R2 browser CORS](https://developers.cloudflare.com/r2/buckets/cors/)
-- [Workers AI Whisper output](https://developers.cloudflare.com/workers-ai/models/whisper-large-v3-turbo/)
+```sh
+TAVREX_VERIFY_URL=https://tavrex-ai.pages.dev TAVREX_INGESTION_LIVE=1 \
+  npm run test:e2e -- tests/ingestion.spec.ts --project=chromium
+```
 
-No live ingestion acceptance pass can be claimed until these services are
-configured and the entire deployed user path has been exercised.
+That test uses the already public sanitized recording and disables traces/video
+so guest cookies and signed upload URLs stay out of test artifacts. Test only the
+configured canonical origin; preview origins are not on the R2 CORS allowlist.
+
+Provider references: [R2 signed URLs](https://developers.cloudflare.com/r2/api/s3/presigned-urls/),
+[browser CORS](https://developers.cloudflare.com/r2/buckets/cors/),
+[Whisper](https://developers.cloudflare.com/workers-ai/models/whisper-large-v3-turbo/).

@@ -128,14 +128,21 @@ export function RecordingMeeting({
   );
 }
 
-function RecordingExperience({
+export function RecordingExperience({
   recording,
   initialSeek,
   searchQuery,
+  privateMeeting = false,
+  analysisFeedback,
 }: {
-  recording: Recording;
+  recording: Omit<Recording, 'intelligence' | 'posterUrl'> & {
+    intelligence: Recording['intelligence'] | null;
+    posterUrl?: string;
+  };
   initialSeek?: number;
   searchQuery?: string;
+  privateMeeting?: boolean;
+  analysisFeedback?: React.ReactNode;
 }) {
   const initialTime = boundedTime(initialSeek ?? 0, recording.duration);
   const video = useRef<HTMLVideoElement>(null);
@@ -270,7 +277,11 @@ function RecordingExperience({
             preload="metadata"
             poster={recording.posterUrl}
             src={recording.mediaUrl}
-            aria-label="Demo meeting recording"
+            aria-label={
+              privateMeeting
+                ? 'Uploaded meeting recording'
+                : 'Demo meeting recording'
+            }
             onLoadedMetadata={ready}
             onCanPlay={() => {
               setState('ready');
@@ -362,26 +373,30 @@ function RecordingExperience({
             </button>
           </div>
         )}
-        <div className="recording-context">
-          <div className="card-heading">
-            <AudioLines size={19} />
-            <h2>A quick recording walkthrough</h2>
-          </div>
-          <p>
-            A short demonstration of recording controls and what happens after a
-            call. Play the conversation, then use a transcript timestamp to
-            return to the source.
-          </p>
-          <details className="source-note">
-            <summary>About this recording</summary>
+        {!privateMeeting && (
+          <div className="recording-context">
+            <div className="card-heading">
+              <AudioLines size={19} />
+              <h2>A quick recording walkthrough</h2>
+            </div>
             <p>
-              Supplied Fathom reference demo, with an imported transcript.
-              Personal on-screen labels are removed from this public copy. This
-              is real recorded media, not a Tavrex-generated transcription.
+              A short demonstration of recording controls and what happens after
+              a call. Play the conversation, then use a transcript timestamp to
+              return to the source.
             </p>
-          </details>
-        </div>
+            <details className="source-note">
+              <summary>About this recording</summary>
+              <p>
+                Supplied Fathom reference demo, with an imported transcript.
+                Personal on-screen labels are removed from this public copy.
+                This is real recorded media, not a Tavrex-generated
+                transcription.
+              </p>
+            </details>
+          </div>
+        )}
         <MeetingMoments
+          privateMeeting={privateMeeting}
           meetingId={recording.id}
           duration={duration}
           seededMoments={recording.moments}
@@ -391,11 +406,17 @@ function RecordingExperience({
           seekDisabled={state === 'error'}
         />
       </section>
-      <MeetingIntelligence
-        intelligence={recording.intelligence}
-        onSeek={seek}
-        seekDisabled={state === 'error'}
-      />
+      {recording.intelligence ? (
+        <MeetingIntelligence
+          intelligence={recording.intelligence}
+          onSeek={seek}
+          seekDisabled={state === 'error'}
+        />
+      ) : (
+        <section className="intelligence-panel ingestion-analysis">
+          {analysisFeedback}
+        </section>
+      )}
       <section className="transcript-panel" aria-labelledby="transcript-title">
         <div className="transcript-header">
           <div>
@@ -420,8 +441,10 @@ function RecordingExperience({
           aria-label="Timestamped transcript"
         >
           <div className="transcript-source">
-            <FileText size={14} /> Imported transcript · Original speaker
-            timestamps
+            <FileText size={14} />{' '}
+            {privateMeeting
+              ? 'AI transcript · Speaker identities are not inferred'
+              : 'Imported transcript · Original speaker timestamps'}
           </div>
           {recording.segments.length === 0 ? (
             <div className="transcript-empty">
@@ -482,8 +505,16 @@ function RecordingExperience({
           )}
         </div>
         <div className="transcript-footer">
-          <span className="speaker-dot" /> Presenter{' '}
-          <span className="speaker-dot speaker-two" /> Participant
+          {privateMeeting ? (
+            <>
+              <span className="speaker-dot" /> Speaker
+            </>
+          ) : (
+            <>
+              <span className="speaker-dot" /> Presenter{' '}
+              <span className="speaker-dot speaker-two" /> Participant
+            </>
+          )}
           <span className="transcript-end">End of transcript</span>
         </div>
       </section>

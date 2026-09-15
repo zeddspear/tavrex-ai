@@ -282,3 +282,61 @@ Typecheck, ESLint, build, and 31 unit tests passed. The production frontend asse
 hashes are unchanged from Checkpoint E. No upload UI, API, or live transcription is
 claimed complete or deployed. Checkpoint F remains the next incomplete checkpoint;
 real ingestion and browser acceptance await service access.
+
+## F — Real private ingestion
+
+Final deployment: https://5a71249d.tavrex-ai.pages.dev (canonical:
+https://tavrex-ai.pages.dev).
+
+Completed after the prerequisite audit above:
+- Applied the private ingestion SQL migration through the authorized database
+  connection. Rechecked RLS and denied direct browser-role table access.
+- Configured runtime secrets securely and direct R2 PUT CORS. The original R2 token
+  denied writes; after its scope was corrected, signed PUTs returned HTTP 200.
+- Added a real upload form, browser progress, recoverable processing states, a
+  private library, and the existing meeting view for uploaded media. Metadata and
+  quotas are validated in both application and database layers.
+- Whisper produces real provider timestamps; the transcript is persisted before
+  Llama analysis. Three named summary views receive server-owned labels/provenance.
+  Unsupported sections can remain empty. Analysis errors retain playback and the
+  transcript; retry skips transcription. Speaker identities are not inferred.
+- Private media is scoped to an HttpOnly guest cookie, with authenticated range
+  responses and no-store headers. Public sharing remains limited to the public
+  fixture. Existing public showcase routes work without backend credentials.
+
+Verification:
+- Strict typecheck, ESLint, production build, and all 37 unit tests passed.
+- The real browser upload test passed against https://tavrex-ai.pages.dev in
+  Chromium. It uploaded the sanitized public WebM directly to R2, waited for real
+  transcription and generated analysis, played/paused, sought to a late transcript
+  timestamp with decoded frames, switched summary views, reloaded persisted results,
+  returned to the private library, and verified that an independent browser could
+  access neither the transcript nor private media (HTTP 401).
+- A separate live API run persisted 22 Whisper segments despite an analysis
+  validation failure. Provider output exposed a conflict between empty unsupported
+  sections and the former schema minimum; correcting that contract enabled the
+  successful complete browser run. No fabricated fallback analysis was substituted.
+- Nine controlled ingestion-state checks passed across Chromium, Firefox, and mobile:
+  playable transcript after analysis failure, processing retry, interrupted upload
+  recovery, empty transcript with playback, invalid-file validation, and containment.
+- Full deployed regression: 53 passed, 3 intentional skips, 4 initial Chromium
+  timeouts under six-worker concurrency. All four failed cases passed with two
+  workers (57 distinct passing scenarios total). Public playback, source seeking,
+  Follow Playback, moments/sharing, cross-meeting search, and the 1920/1440/1024/390px
+  scroll-layout matrix remained intact. No test assertions or timeouts were weakened.
+- Upload-page screenshots at 1440×1000 and 390×844 were rendered and visually
+  inspected; document width stayed within the viewport.
+- `.dev.vars` remains ignored. Exact configured-value scanning found no matches
+  in 84 repository/log/build files. Code/doc diffs passed whitespace validation;
+  historical capture content is preserved verbatim.
+
+Limits: 25 MB / ten minutes, three uploads per browser per rolling day, twenty
+workspace uploads per rolling day, one hundred stored rows total, and three
+processing attempts per recording. Provider allowances still apply. Keep the tab
+open during processing; there is no job queue, diarization, automatic retention
+cleanup, or account recovery. Guest access expires with its seven-day cookie.
+Real provider acceptance used WebM in Chromium; other accepted codec combinations
+are not claimed as individually tested. Safari and physical devices were not tested.
+
+Next: Checkpoint G — submission readiness, public repository verification, and the
+camera-on walkthrough of no more than five minutes. No Tier C work was started.

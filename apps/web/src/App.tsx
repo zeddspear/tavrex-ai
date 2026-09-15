@@ -43,6 +43,11 @@ import {
 } from './components/MeetingSearch';
 import { RecordingMeeting } from './components/RecordingMeeting';
 import { SharedMoment } from './components/SharedMoment';
+import {
+  UploadMeeting,
+  UploadedLibrary,
+  UploadedMeetingDetail,
+} from './components/UploadMeeting';
 
 function Brand() {
   return (
@@ -213,6 +218,11 @@ function Dashboard() {
           <AudioLines size={18} /> {meetings.length} meetings in your library
         </span>
       </div>
+      <div className="dashboard-upload">
+        <Link className="primary-button" to="/app/upload">
+          Upload recording <ArrowRight size={16} />
+        </Link>
+      </div>
       <section className="featured" aria-labelledby="featured-title">
         <div className="featured-copy">
           <div className="feature-kicker">
@@ -331,7 +341,10 @@ function Dashboard() {
         )}
         <div className="meeting-list" aria-live="polite">
           {normalizedQuery && searchResults.length ? (
-            <MeetingSearchResults results={searchResults} query={normalizedQuery} />
+            <MeetingSearchResults
+              results={searchResults}
+              query={normalizedQuery}
+            />
           ) : !normalizedQuery && filtered.length ? (
             filtered.map((meeting) => (
               <MeetingRow key={meeting.id} meeting={meeting} />
@@ -365,6 +378,7 @@ function Dashboard() {
           </span>
         </div>
       </section>
+      <UploadedLibrary query={query} />
       <div className="bottom-note">
         <span className="note-icon">
           <FileText size={19} />
@@ -456,7 +470,12 @@ function MeetingPreview() {
         ?.scrollIntoView({ block: 'start', behavior: 'auto' }),
     );
   }, [meeting, searchQuery]);
-  if (!meeting) return <NotFound />;
+  if (!meeting)
+    return id && /^[a-f0-9-]{36}$/.test(id) ? (
+      <UploadedMeetingDetail key={id} id={id} />
+    ) : (
+      <NotFound />
+    );
   if (meeting.provenance === 'reference-recording')
     return (
       <RecordingMeeting
@@ -526,7 +545,9 @@ function MeetingPreview() {
             </span>
             <div>
               <span className="small-label">OPENED FROM SEARCH</span>
-              <h2 id="meeting-search-context-title">Matching conversation context</h2>
+              <h2 id="meeting-search-context-title">
+                Matching conversation context
+              </h2>
             </div>
           </div>
           <p className="meeting-search-query">
@@ -594,7 +615,8 @@ function MeetingPreview() {
             <FileText size={18} />
             <p>
               Search can open labeled excerpts from this synthetic conversation.
-              The recorded demo includes source-linked playback and action items.
+              The recorded demo includes source-linked playback and action
+              items.
             </p>
           </div>
         </aside>
@@ -627,6 +649,7 @@ export function App() {
             <Routes>
               <Route path="/" element={<Navigate to="/app" replace />} />
               <Route path="/app" element={<Dashboard />} />
+              <Route path="/app/upload" element={<UploadMeeting />} />
               <Route path="/app/meetings/:id" element={<MeetingPreview />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
