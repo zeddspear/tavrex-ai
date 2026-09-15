@@ -340,3 +340,42 @@ are not claimed as individually tested. Safari and physical devices were not tes
 
 Next: Checkpoint G — submission readiness, public repository verification, and the
 camera-on walkthrough of no more than five minutes. No Tier C work was started.
+
+## G — Submission readiness audit (walkthrough link pending)
+
+The final camera-on walkthrough is the one outstanding hand-in artifact; the user
+will provide it after the rest of the checkpoint is prepared. No video or duration
+is claimed as verified yet.
+
+Prepared and verified:
+
+- Canonical live HTTPS app opened in a fresh Chromium browser with four visible
+  seeded meetings, including one permissioned real recording and three labeled
+  synthetic examples. The repository is publicly reachable; `mvp` includes F and
+  committed `.agent-logs/`. The default branch is fast-forwarded as part of this
+  audit so a reviewer landing at the repo root sees the implementation.
+- Rehearsed the actual live five-minute route: dashboard → real meeting → decoded
+  play/pause and transcript seek → all three differentiated templates and an action
+  source seek → saved moment → public view in an independent clean browser →
+  transcript search source destination → upload page. The route reported no page
+  script errors or horizontal overflow. Desktop dashboard, meeting, search, share,
+  upload, and 390px mobile meeting screenshots were rendered and visually inspected.
+- Production regression across Chromium, Firefox, and mobile emulation: 56 passed,
+  one intentional mobile help-dialog skip, using two workers. The earlier F upload
+  verification remains the live provider acceptance; no extra model quota was
+  consumed solely for submission rehearsal.
+- Strict TypeScript check, ESLint, production build, and all 37 unit tests passed.
+  The build kept the deployed client asset hashes, so documentation changes do not
+  require another Pages deployment.
+- The exact configured-value scan found no credential matches in 85 repository/log/
+  build files; `.dev.vars` remained ignored. No email-address patterns were found
+  in public source, fixtures, documentation, or committed capture logs. The logged
+  assessment prompts and capture canaries remain committed without hook changes.
+- [SUBMISSION.md](../SUBMISSION.md) contains labeled live/repository fields,
+  reviewer notes, and a timed camera-on recording route. It explains how to show
+  a new processing state and a separately preprocessed private meeting honestly
+  within five minutes.
+
+Pending before marking G complete: receive the user's camera-on walkthrough, verify
+that its public link opens externally and lasts no more than five minutes, then fill
+its submission field. This is a required assessment artifact, not bonus scope.

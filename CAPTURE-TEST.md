@@ -6,8 +6,9 @@ A later IDE canary contains both the verbatim prompt and final response:
 `.agent-logs/2026-09-13_17-56-36_01a09be9-ebf3-79c2-9aa5-7d7a53375762.md`.
 The current build prompt is also automatically recorded in a separate session:
 `.agent-logs/2026-09-13_18-01-29_01a09bee-62af-7602-bb20-0320c75b9f77.md`.
-The current session records model `gpt-6-astra`; planning and implementation use
-this same agent. No hook code or historical log entries were changed.
+At the time of that verification, the session recorded model `gpt-6-astra`.
+Later prompts in the same capture log also record a model switch. Hook code and
+historical entries remain unchanged.
 The hook's `tool: codex-cli` field is hardcoded and does not distinguish the IDE
 host; the latest canary prompt itself includes IDE context.
 

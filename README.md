@@ -9,6 +9,7 @@ meetings → playback and transcript → summaries → sourced actions → momen
 The playback, transcript, intelligence, public-moment, search, and private ingestion flows are implemented.
 
 Working features:
+
 - Responsive, no-login library with one real reference recording and three original synthetic examples.
 - Real video/audio playback, native seek/volume controls, five playback speeds.
 - Timestamped speaker turns that seek the player, active-turn highlighting, optional follow-scroll.
@@ -28,7 +29,8 @@ Working features:
 Private uploads go directly to R2, receive live Whisper transcription and Llama analysis,
 and persist in Supabase behind a browser-scoped guest session. Failed analysis can
 retry using its saved transcript. See [ingestion setup and limits](docs/ingestion-setup.md).
-No live bot, calendar connection, or authentication is represented as functional.
+No live bot, calendar connection, automatic diarization, or account recovery is
+represented as functional. Browser-scoped guest sessions protect private uploads.
 
 ## Run locally
 
@@ -122,8 +124,9 @@ local login; never paste tokens into chat or put secrets in browser variables.
 ## Submission
 
 - Live URL: https://tavrex-ai.pages.dev
-- Public repository URL: not yet verified.
-- Walkthrough URL: pending; camera-on recording must be no longer than 5 minutes.
+- Public repository URL: https://github.com/zeddspear/tavrex-ai (public; full implementation on the default branch).
+- Walkthrough URL: pending user camera-on recording, no longer than 5 minutes.
+- [Timed route and reviewer notes](SUBMISSION.md).
 
 Current acceptance evidence: [checkpoint report](docs/checkpoints.md). Production
 browser checks can be repeated with
